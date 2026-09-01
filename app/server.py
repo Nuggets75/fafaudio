@@ -135,6 +135,24 @@ def read_wav_info(path):
         return 2, 48000, 0
 
 
+def convert_to_wav(src_path, dst_path):
+    """Convert any audio format to 16-bit PCM WAV via ffmpeg.
+    Returns (ok: bool, stderr_snippet: str)."""
+    try:
+        result = subprocess.run(
+            ["ffmpeg", "-y", "-i", src_path,
+             "-acodec", "pcm_s16le", dst_path],
+            capture_output=True, timeout=60,
+        )
+        if result.returncode == 0:
+            return True, ""
+        return False, result.stderr.decode("utf-8", errors="replace")[-2000:]
+    except subprocess.TimeoutExpired:
+        return False, "ffmpeg timed out after 60s"
+    except FileNotFoundError:
+        return False, "ffmpeg not installed in container"
+
+
 # =====================================================================
 # Routes
 # =====================================================================
@@ -216,12 +234,11 @@ def build():
         wave_entries = []
         seen_cues = set()
         for f in files:
-            filename = secure_filename(f.filename or "")
-            if not filename.lower().endswith(".wav"):
-                return jsonify(error=f"Not a WAV file: {filename}"), 400
-            f.save(os.path.join(workdir, filename))
+            original_name = secure_filename(f.filename or "")
+            if not original_name:
+                continue
 
-            base = os.path.splitext(filename)[0]
+            base = os.path.splitext(original_name)[0]
             cue = sanitize_name(base, "cue")
             unique = cue
             n = 2
@@ -230,11 +247,29 @@ def build():
                 n += 1
             seen_cues.add(unique)
 
-            channels, rate, data_length = read_wav_info(
-                os.path.join(workdir, filename)
-            )
+            # Save the upload under a unique intermediate name (keeps original
+            # extension so ffmpeg can auto-detect the format).
+            src_ext = os.path.splitext(original_name)[1] or ".bin"
+            src_path = os.path.join(workdir, f"_src_{unique}{src_ext}")
+            f.save(src_path)
+
+            # Convert to canonical 16-bit PCM WAV named after the cue.
+            wav_filename = f"{unique}.wav"
+            wav_path = os.path.join(workdir, wav_filename)
+            ok, err = convert_to_wav(src_path, wav_path)
+            if not ok:
+                return jsonify(
+                    error=f"Could not read/convert '{original_name}' to WAV.",
+                    ffmpeg_stderr=err,
+                ), 400
+            try:
+                os.remove(src_path)
+            except OSError:
+                pass
+
+            channels, rate, data_length = read_wav_info(wav_path)
             wave_entries.append({
-                "filename": filename,
+                "filename": wav_filename,
                 "cue": unique,
                 "channels": channels,
                 "rate": rate,
@@ -295,7 +330,7 @@ def build():
                 jsonify(
                     error="XactBld did not produce all 3 output files "
                     "(.xwb, .xsb, .xgs). See diagnostic output below.",
-                    version="v7-volume",
+                    version="v8-ffmpeg",
                     command=" ".join(cmd),
                     workdir_contents=os.listdir(workdir),
                     win_dir_contents=os.listdir(os.path.join(workdir, "Win"))

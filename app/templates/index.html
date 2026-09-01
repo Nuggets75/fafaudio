@@ -80,7 +80,7 @@
             <button type="submit" style="width:auto; padding:6px 14px; margin:0; background:#444; font-size:12px;">Log out</button>
         </form>
     </h1>
-    <p class="sub">Upload WAV files → get .xwb / .xsb / .xgs bundle for FAF mods.</p>
+    <p class="sub">Upload audio files → get .xwb / .xsb / .xgs bundle for FAF mods.</p>
 
     <form id="f">
         <label for="bank_name">Bank name</label>
@@ -96,8 +96,13 @@
             0 = as-recorded. FAF audio is quiet by default, so try +6 to +12.
         </p>
 
-        <label for="waves">WAV files (multiple, up to 32)</label>
-        <input type="file" id="waves" name="waves" accept=".wav" multiple required>
+        <label for="waves">Audio files (multiple, up to 32)</label>
+        <input type="file" id="waves" name="waves"
+               accept=".wav,.mp3,.ogg,.m4a,.aac,.flac,.opus,.wma,audio/*"
+               multiple required>
+        <p style="font-size:11px; color:#888; margin-top:4px;">
+            Any common audio format. Cue name = filename without extension.
+        </p>
 
         <button type="submit">Build</button>
         <div id="status"></div>
@@ -147,6 +152,7 @@ form.addEventListener('submit', async (e) => {
                     (data.command ? 'COMMAND: ' + data.command + '\n\n' : '') +
                     (data.workdir_contents ? 'WORKDIR: ' + JSON.stringify(data.workdir_contents) + '\n' : '') +
                     (data.win_dir_contents ? 'WIN DIR: ' + JSON.stringify(data.win_dir_contents) + '\n\n' : '') +
+                    (data.ffmpeg_stderr ? 'FFMPEG STDERR:\n' + data.ffmpeg_stderr + '\n\n' : '') +
                     (data.stderr ? 'STDERR:\n' + data.stderr + '\n\n' : '') +
                     (data.stdout ? 'STDOUT:\n' + data.stdout + '\n\n' : '') +
                     (data.xap_content ? 'GENERATED .xap:\n' + data.xap_content : '') +

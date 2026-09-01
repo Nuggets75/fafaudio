@@ -16,6 +16,7 @@ RUN dpkg --add-architecture i386 \
         zip \
         ca-certificates \
         procps \
+        ffmpeg \
  && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir flask==3.0.0 gunicorn==21.2.0
