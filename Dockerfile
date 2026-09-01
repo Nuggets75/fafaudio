@@ -18,7 +18,7 @@ RUN dpkg --add-architecture i386 \
         procps \
  && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir --break-system-packages flask==3.0.0 gunicorn==21.2.0
+RUN pip3 install --no-cache-dir flask==3.0.0 gunicorn==21.2.0
 
 COPY setup/ /setup/
 RUN chmod +x /setup/*.sh
