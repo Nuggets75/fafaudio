@@ -1,25 +1,20 @@
 """
-Generate a minimal XACT .xap project file from a list of wave entries.
+Generate a XACT2 .xap project file.
 
-The format is that of the DirectX SDK XACT tool (2008-era, "Content Version = 43").
-This is what FA/FAF's audio engine accepts. XACT tools from later SDKs
-(June 2010 onwards) produce Content Version 46 which FA rejects.
+Format is that of the August 2007 DirectX SDK (Signature = XACT2, Version = 16),
+which produces Content Version = 43 XWB files that FA/FAF accepts.
 
-References for field values:
-- Standard XACT project templates from the DirectX SDK samples
-- Working .xap projects from the FAF modding community
-
-If the CLI builder rejects an output from this generator, the fix is
-usually a missing property block, not a wrong value in an existing one.
+Template values (quoting, per-block field order, Variable definitions,
+etc.) were taken from a known-working NameOrDeath.xap.
 """
 
 from typing import List, Dict
 
 
-HEADER = """Signature = XACT3;
-Version = 18;
+HEADER = """Signature = XACT2;
+Version = 16;
 Content Version = 43;
-Release = March 2008;
+Release = August 2007;
 
 Options
 {
@@ -29,9 +24,9 @@ Options
 
 Global Settings
 {
-    Xbox File = "Xbox\\GlobalSettings.xgs";
-    Windows File = "Win\\GlobalSettings.xgs";
-    Header File = "GlobalSettings.h";
+    Xbox File = Xbox\\%s.xgs;
+    Windows File = Win\\%s.xgs;
+    Header File = %s.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
     Last Modified Low = 0;
@@ -39,10 +34,11 @@ Global Settings
 
     Category
     {
-        Name = "Global";
+        Name = Global;
         Public = 1;
         Background Music = 0;
         Volume = 0;
+
         Category Entry
         {
         }
@@ -63,13 +59,14 @@ Global Settings
 
     Category
     {
-        Name = "Default";
+        Name = Default;
         Public = 1;
         Background Music = 0;
         Volume = 0;
+
         Category Entry
         {
-            Name = "Global";
+            Name = Global;
         }
 
         Instance Limit
@@ -88,13 +85,14 @@ Global Settings
 
     Category
     {
-        Name = "Music";
+        Name = Music;
         Public = 1;
         Background Music = 1;
         Volume = 0;
+
         Category Entry
         {
-            Name = "Global";
+            Name = Global;
         }
 
         Instance Limit
@@ -111,59 +109,158 @@ Global Settings
         }
     }
 
-    File Notification Interval Ms = 250;
-
-    RS
+    Variable
     {
-        Name = "InGame";
+        Name = OrientationAngle;
         Public = 1;
-        RS Curve Def
-        {
-            Segment
-            {
-                Point0 = 0.000000, 0.000000, 0;
-                Point1 = 1.000000, 1.000000, 0;
-            }
-        }
+        Global = 0;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = -180.000000;
+        Max = 180.000000;
+    }
+
+    Variable
+    {
+        Name = DopplerPitchScalar;
+        Public = 1;
+        Global = 0;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 1.000000;
+        Initial Value = 1.000000;
+        Min = 0.000000;
+        Max = 4.000000;
+    }
+
+    Variable
+    {
+        Name = SpeedOfSound;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 343.500000;
+        Initial Value = 343.500000;
+        Min = 0.000000;
+        Max = 1000000.000000;
+    }
+
+    Variable
+    {
+        Name = ReleaseTime;
+        Public = 1;
+        Global = 0;
+        Internal = 1;
+        External = 1;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 1;
+        Time = 1;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 15.000001;
+    }
+
+    Variable
+    {
+        Name = AttackTime;
+        Public = 1;
+        Global = 0;
+        Internal = 1;
+        External = 1;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 1;
+        Time = 1;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 15.000001;
+    }
+
+    Variable
+    {
+        Name = NumCueInstances;
+        Public = 1;
+        Global = 0;
+        Internal = 1;
+        External = 1;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 1;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 1024.000000;
+    }
+
+    Variable
+    {
+        Name = Distance;
+        Public = 1;
+        Global = 0;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 1000000.000000;
     }
 }
 """
 
 WAVE_BANK_HEADER = """
 Wave Bank
-{{
-    Name = "{bank_name}";
-    Xbox File = "Xbox\\{bank_name}.xwb";
-    Windows File = "Win\\{bank_name}.xwb";
+{
+    Name = %s;
+    Xbox File = Xbox\\%s.xwb;
+    Windows File = Win\\%s.xwb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
-    Header File = "{bank_name}.h";
+    Seek Tables = 1;
+    Compression Preset Name = <none>;
+    Xbox Bank Last Modified Low = 0;
+    Xbox Bank Last Modified High = 0;
+    PC Bank Last Modified Low = 0;
+    PC Bank Last Modified High = 0;
     Bank Last Revised Low = 0;
     Bank Last Revised High = 0;
-    Bank Release = 0;
-
-    Streaming = 0;
-    Seek Tables = 0;
-    Compression Preset Name = "<none>";
-    Include Names = 1;
-
-    Last Modified Low = 0;
-    Last Modified High = 0;
 """
 
-WAVE_ENTRY = """
+WAVE_ENTRY_TEMPLATE = """
     Wave
-    {{
-        Name = "{cue}";
-        File = "{filename}";
+    {
+        Name = %s;
+        File = %s;
         Build Settings Last Modified Low = 0;
         Build Settings Last Modified High = 0;
 
         Cache
-        {{
+        {
             Format Tag = 0;
-            Channels = 1;
-            Sampling Rate = 44100;
+            Channels = 2;
+            Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 0;
             Play Region Length = 0;
@@ -172,95 +269,94 @@ WAVE_ENTRY = """
             File Type = 1;
             Last Modified Low = 0;
             Last Modified High = 0;
-        }}
-    }}
+        }
+    }
 """
 
 WAVE_BANK_FOOTER = "}\n"
 
 SOUND_BANK_HEADER = """
 Sound Bank
-{{
-    Name = "{bank_name}";
-    Xbox File = "Xbox\\{bank_name}.xsb";
-    Windows File = "Win\\{bank_name}.xsb";
+{
+    Name = %s;
+    Xbox File = Xbox\\%s.xsb;
+    Windows File = Win\\%s.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
-    Header File = "{bank_name}.h";
-    Exclude Category Names = 0;
-    Exclude Variable Names = 0;
-
-    Last Modified Low = 0;
-    Last Modified High = 0;
+    Bank Last Modified Low = 0;
+    Bank Last Modified High = 0;
+    Header Last Modified High = 0;
+    Header Last Modified Low = 0;
 """
 
-SOUND_ENTRY = """
+SOUND_ENTRY_TEMPLATE = """
     Sound
-    {{
-        Name = "{cue}";
-        Volume = -600;
+    {
+        Name = %s;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
         Category Entry
-        {{
-            Name = "Default";
-        }}
+        {
+            Name = Default;
+        }
 
         Track
-        {{
+        {
             Volume = 0;
-            Use Filter = 0;
 
             Play Wave Event
-            {{
+            {
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;
                 New Speaker Position On Loop = 1;
                 Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
+                Speaer Position Arc = 0.000000;
 
                 Event Header
-                {{
+                {
                     Timestamp = 0;
                     Relative = 0;
                     Random Recurrence = 0;
                     Random Offset = 0;
-                }}
+                }
 
                 Wave Entry
-                {{
-                    Bank Name = "{bank_name}";
+                {
+                    Bank Name = %s;
                     Bank Index = 0;
-                    Entry Name = "{cue}";
-                    Entry Index = {index};
+                    Entry Name = %s;
+                    Entry Index = %d;
                     Weight = 255;
                     Weight Min = 0;
-                }}
-            }}
-        }}
-    }}
+                }
+            }
+        }
+    }
 """
 
-CUE_ENTRY = """
+CUE_ENTRY_TEMPLATE = """
     Cue
-    {{
-        Name = "{cue}";
-        Sound Entry
-        {{
-            Name = "{cue}";
-            Index = {index};
-            Weight Min = 0;
-            Weight Max = 255;
-        }}
+    {
+        Name = %s;
+
         Variation
-        {{
+        {
             Variation Type = 3;
             Variation Table Type = 1;
-            New Variation On Loop = 0;
-        }}
-    }}
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = %s;
+            Index = %d;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
 """
 
 SOUND_BANK_FOOTER = "}\n"
@@ -268,34 +364,31 @@ SOUND_BANK_FOOTER = "}\n"
 
 def generate_xap(bank_name: str, waves: List[Dict[str, str]]) -> str:
     """
-    Build a full .xap project text.
+    Build a full .xap project text based on the August 2007 XACT2 format.
 
     Parameters
     ----------
-    bank_name : bank identifier (used for Wave Bank AND Sound Bank names,
-                and as the output filename prefix)
+    bank_name : identifier used for the Wave Bank and Sound Bank names,
+                and as the output file prefix
     waves     : list of {"filename": "foo.wav", "cue": "foo"} dicts
 
     Returns the .xap content as a string.
     """
-    parts = [HEADER]
+    parts = []
+    parts.append(HEADER % (bank_name, bank_name, bank_name))
 
-    parts.append(WAVE_BANK_HEADER.format(bank_name=bank_name))
+    parts.append(WAVE_BANK_HEADER % (bank_name, bank_name, bank_name))
     for w in waves:
-        parts.append(
-            WAVE_ENTRY.format(cue=w["cue"], filename=w["filename"])
-        )
+        parts.append(WAVE_ENTRY_TEMPLATE % (w["cue"], w["filename"]))
     parts.append(WAVE_BANK_FOOTER)
 
-    parts.append(SOUND_BANK_HEADER.format(bank_name=bank_name))
+    parts.append(SOUND_BANK_HEADER % (bank_name, bank_name, bank_name))
     for idx, w in enumerate(waves):
         parts.append(
-            SOUND_ENTRY.format(
-                cue=w["cue"], bank_name=bank_name, index=idx
-            )
+            SOUND_ENTRY_TEMPLATE % (w["cue"], bank_name, w["cue"], idx)
         )
     for idx, w in enumerate(waves):
-        parts.append(CUE_ENTRY.format(cue=w["cue"], index=idx))
+        parts.append(CUE_ENTRY_TEMPLATE % (w["cue"], w["cue"], idx))
     parts.append(SOUND_BANK_FOOTER)
 
     return "".join(parts)

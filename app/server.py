@@ -259,7 +259,7 @@ def build():
                 jsonify(
                     error="XactBld did not produce all 3 output files "
                     "(.xwb, .xsb, .xgs). See diagnostic output below.",
-                    version="v3-relative-flagafter",
+                    version="v4-xact2-format",
                     command=" ".join(cmd),
                     workdir_contents=os.listdir(workdir),
                     win_dir_contents=os.listdir(os.path.join(workdir, "Win"))
