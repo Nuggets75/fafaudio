@@ -87,6 +87,15 @@
         <input type="text" id="bank_name" name="bank_name"
                placeholder="SoundBank" value="SoundBank">
 
+        <label for="volume_db">Volume adjustment: <span id="vol_val">+6</span> dB</label>
+        <input type="range" id="volume_db" name="volume_db"
+               min="-24" max="12" step="1" value="6"
+               style="width:100%;"
+               oninput="document.getElementById('vol_val').textContent = (this.value > 0 ? '+' : '') + this.value;">
+        <p style="font-size:11px; color:#888; margin-top:4px;">
+            0 = as-recorded. FAF audio is quiet by default, so try +6 to +12.
+        </p>
+
         <label for="waves">WAV files (multiple, up to 32)</label>
         <input type="file" id="waves" name="waves" accept=".wav" multiple required>
 

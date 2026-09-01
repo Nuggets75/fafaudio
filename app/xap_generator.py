@@ -293,7 +293,7 @@ SOUND_ENTRY_TEMPLATE = """
     Sound
     {
         Name = %s;
-        Volume = -1200;
+        Volume = %d;
         Pitch = 0;
         Priority = 0;
 
@@ -362,7 +362,8 @@ CUE_ENTRY_TEMPLATE = """
 SOUND_BANK_FOOTER = "}\n"
 
 
-def generate_xap(bank_name: str, waves: List[Dict[str, str]]) -> str:
+def generate_xap(bank_name: str, waves: List[Dict[str, str]],
+                 volume_mb: int = 0) -> str:
     """
     Build a full .xap project text based on the August 2007 XACT2 format.
 
@@ -370,7 +371,11 @@ def generate_xap(bank_name: str, waves: List[Dict[str, str]]) -> str:
     ----------
     bank_name : identifier used for the Wave Bank and Sound Bank names,
                 and as the output file prefix
-    waves     : list of {"filename": "foo.wav", "cue": "foo"} dicts
+    waves     : list of {"filename": "foo.wav", "cue": "foo",
+                          "channels": int, "rate": int, "data_length": int}
+    volume_mb : Volume in millibels applied to every Sound. 0 = as-recorded,
+                positive = louder, negative = quieter. XACT range roughly
+                -6000 to +1200.
 
     Returns the .xap content as a string.
     """
@@ -388,7 +393,7 @@ def generate_xap(bank_name: str, waves: List[Dict[str, str]]) -> str:
     parts.append(SOUND_BANK_HEADER % (bank_name, bank_name, bank_name))
     for idx, w in enumerate(waves):
         parts.append(
-            SOUND_ENTRY_TEMPLATE % (w["cue"], bank_name, w["cue"], idx)
+            SOUND_ENTRY_TEMPLATE % (w["cue"], volume_mb, bank_name, w["cue"], idx)
         )
     for idx, w in enumerate(waves):
         parts.append(CUE_ENTRY_TEMPLATE % (w["cue"], w["cue"], idx))

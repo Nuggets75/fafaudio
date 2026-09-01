@@ -202,6 +202,15 @@ def build():
 
     bank_name = sanitize_name(request.form.get("bank_name", ""), "SoundBank")
 
+    # Volume in dB, clamped to a safe range. Converted to millibels
+    # (XACT's unit) by *100. 0 = as-recorded; positive = louder.
+    try:
+        volume_db = int(request.form.get("volume_db", "0"))
+    except ValueError:
+        volume_db = 0
+    volume_db = max(-30, min(12, volume_db))
+    volume_mb = volume_db * 100
+
     workdir = tempfile.mkdtemp(prefix="xact-")
     try:
         wave_entries = []
@@ -232,7 +241,7 @@ def build():
                 "data_length": data_length,
             })
 
-        xap_text = generate_xap(bank_name, wave_entries)
+        xap_text = generate_xap(bank_name, wave_entries, volume_mb=volume_mb)
         xap_path = os.path.join(workdir, f"{bank_name}.xap")
         with open(xap_path, "w", encoding="utf-8") as fh:
             fh.write(xap_text)
@@ -286,7 +295,7 @@ def build():
                 jsonify(
                     error="XactBld did not produce all 3 output files "
                     "(.xwb, .xsb, .xgs). See diagnostic output below.",
-                    version="v6-mkdir-Win",
+                    version="v7-volume",
                     command=" ".join(cmd),
                     workdir_contents=os.listdir(workdir),
                     win_dir_contents=os.listdir(os.path.join(workdir, "Win"))
