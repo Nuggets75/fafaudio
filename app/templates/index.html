@@ -134,6 +134,10 @@ form.addEventListener('submit', async (e) => {
                 const det = document.createElement('details');
                 det.innerHTML = '<summary>Diagnostic output</summary>' +
                     '<pre>' +
+                    (data.version ? 'VERSION: ' + data.version + '\n' : '') +
+                    (data.command ? 'COMMAND: ' + data.command + '\n\n' : '') +
+                    (data.workdir_contents ? 'WORKDIR: ' + JSON.stringify(data.workdir_contents) + '\n' : '') +
+                    (data.win_dir_contents ? 'WIN DIR: ' + JSON.stringify(data.win_dir_contents) + '\n\n' : '') +
                     (data.stderr ? 'STDERR:\n' + data.stderr + '\n\n' : '') +
                     (data.stdout ? 'STDOUT:\n' + data.stdout + '\n\n' : '') +
                     (data.xap_content ? 'GENERATED .xap:\n' + data.xap_content : '') +

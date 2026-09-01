@@ -224,9 +224,14 @@ def build():
                 500,
             )
 
+        # Pass only the basename (with cwd set to workdir). Wine handles
+        # relative paths cleanly; absolute Unix paths can confuse it.
+        xap_basename = f"{bank_name}.xap"
+        cmd = ["wine", xactbld, xap_basename, "/WINDOWS"]
+
         try:
             proc = subprocess.run(
-                ["wine", xactbld, "/WINDOWS", xap_path],
+                cmd,
                 cwd=workdir, env=WINE_ENV,
                 capture_output=True, timeout=90,
             )
@@ -254,6 +259,11 @@ def build():
                 jsonify(
                     error="XactBld did not produce all 3 output files "
                     "(.xwb, .xsb, .xgs). See diagnostic output below.",
+                    version="v3-relative-flagafter",
+                    command=" ".join(cmd),
+                    workdir_contents=os.listdir(workdir),
+                    win_dir_contents=os.listdir(os.path.join(workdir, "Win"))
+                        if os.path.isdir(os.path.join(workdir, "Win")) else "no Win dir",
                     found=list(outputs.keys()),
                     returncode=proc.returncode,
                     stdout=proc.stdout.decode("utf-8", errors="replace")[:8000],
