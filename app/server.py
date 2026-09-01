@@ -226,7 +226,7 @@ def build():
 
         try:
             proc = subprocess.run(
-                ["wine", xactbld, xap_path],
+                ["wine", xactbld, "/WINDOWS", xap_path],
                 cwd=workdir, env=WINE_ENV,
                 capture_output=True, timeout=90,
             )
