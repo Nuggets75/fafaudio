@@ -259,11 +259,11 @@ WAVE_ENTRY_TEMPLATE = """
         Cache
         {
             Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 48000;
+            Channels = %d;
+            Sampling Rate = %d;
             Bits Per Sample = 1;
-            Play Region Offset = 0;
-            Play Region Length = 0;
+            Play Region Offset = 44;
+            Play Region Length = %d;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
@@ -379,7 +379,10 @@ def generate_xap(bank_name: str, waves: List[Dict[str, str]]) -> str:
 
     parts.append(WAVE_BANK_HEADER % (bank_name, bank_name, bank_name))
     for w in waves:
-        parts.append(WAVE_ENTRY_TEMPLATE % (w["cue"], w["filename"]))
+        parts.append(WAVE_ENTRY_TEMPLATE % (
+            w["cue"], w["filename"],
+            w.get("channels", 2), w.get("rate", 48000), w.get("data_length", 0),
+        ))
     parts.append(WAVE_BANK_FOOTER)
 
     parts.append(SOUND_BANK_HEADER % (bank_name, bank_name, bank_name))

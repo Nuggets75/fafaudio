@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import tempfile
 import time
+import wave
 import zipfile
 from datetime import timedelta
 from functools import wraps
@@ -121,6 +122,19 @@ def sanitize_name(raw, default):
     return cleaned if cleaned else default
 
 
+def read_wav_info(path):
+    """Return (channels, sample_rate, data_length_bytes) or defaults."""
+    try:
+        with wave.open(path, "rb") as w:
+            channels = w.getnchannels()
+            rate = w.getframerate()
+            nframes = w.getnframes()
+            sampwidth = w.getsampwidth()
+            return channels, rate, nframes * channels * sampwidth
+    except Exception:
+        return 2, 48000, 0
+
+
 # =====================================================================
 # Routes
 # =====================================================================
@@ -206,7 +220,17 @@ def build():
                 unique = f"{cue}_{n}"
                 n += 1
             seen_cues.add(unique)
-            wave_entries.append({"filename": filename, "cue": unique})
+
+            channels, rate, data_length = read_wav_info(
+                os.path.join(workdir, filename)
+            )
+            wave_entries.append({
+                "filename": filename,
+                "cue": unique,
+                "channels": channels,
+                "rate": rate,
+                "data_length": data_length,
+            })
 
         xap_text = generate_xap(bank_name, wave_entries)
         xap_path = os.path.join(workdir, f"{bank_name}.xap")
@@ -227,7 +251,7 @@ def build():
         # Pass only the basename (with cwd set to workdir). Wine handles
         # relative paths cleanly; absolute Unix paths can confuse it.
         xap_basename = f"{bank_name}.xap"
-        cmd = ["wine", xactbld, xap_basename, "/WINDOWS"]
+        cmd = ["wine", xactbld, xap_basename, "/WINDOWS", "/R:VERBOSE"]
 
         try:
             proc = subprocess.run(
@@ -259,7 +283,7 @@ def build():
                 jsonify(
                     error="XactBld did not produce all 3 output files "
                     "(.xwb, .xsb, .xgs). See diagnostic output below.",
-                    version="v4-xact2-format",
+                    version="v5-wav-metadata-verbose",
                     command=" ".join(cmd),
                     workdir_contents=os.listdir(workdir),
                     win_dir_contents=os.listdir(os.path.join(workdir, "Win"))
