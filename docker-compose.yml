@@ -1,0 +1,21 @@
+name: fafaudio
+
+volumes:
+  fafaudio_wine:
+
+services:
+  app:
+    build: https://github.com/Nuggets75/fafaudio.git#main
+    container_name: fafaudio
+    restart: unless-stopped
+    ports:
+      - "8096:5000"
+    volumes:
+      - fafaudio_wine:/wine
+      # Path on the proxmox host where you dropped the XACT binaries.
+      # Change the left-hand side to wherever you put them:
+      - /root/fafaudio-xact-binaries:/xact-binaries:ro
+    environment:
+      - ADMIN_PASSWORD=CHANGE-ME-BEFORE-DEPLOY
+      # Uncomment if your DXSDK ships XactBld.exe (no "3") instead:
+      # - XACTBLD_EXE=/wine/drive_c/xact/XactBld.exe
