@@ -251,6 +251,9 @@ def build():
         # Pass only the basename (with cwd set to workdir). Wine handles
         # relative paths cleanly; absolute Unix paths can confuse it.
         xap_basename = f"{bank_name}.xap"
+        # XactBld writes to Win\ and Xbox\ subfolders but does NOT create them.
+        os.makedirs(os.path.join(workdir, "Win"), exist_ok=True)
+        os.makedirs(os.path.join(workdir, "Xbox"), exist_ok=True)
         cmd = ["wine", xactbld, xap_basename, "/WINDOWS", "/R:VERBOSE"]
 
         try:
@@ -283,7 +286,7 @@ def build():
                 jsonify(
                     error="XactBld did not produce all 3 output files "
                     "(.xwb, .xsb, .xgs). See diagnostic output below.",
-                    version="v5-wav-metadata-verbose",
+                    version="v6-mkdir-Win",
                     command=" ".join(cmd),
                     workdir_contents=os.listdir(workdir),
                     win_dir_contents=os.listdir(os.path.join(workdir, "Win"))
