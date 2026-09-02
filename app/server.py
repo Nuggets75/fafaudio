@@ -27,7 +27,7 @@ from xap_generator import (generate_xap, CATEGORIES, COMPRESSION_PRESETS,
 # Config
 # =====================================================================
 
-APP_VERSION = "v14-category-guidance"
+APP_VERSION = "v16-advanced-collapse"
 
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
 if not ADMIN_PASSWORD:

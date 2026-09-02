@@ -58,6 +58,18 @@
         .file-card label { margin: 10px 0 4px; font-size: 12px; font-weight: 500; }
         .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
         input[type=range] { width: 100%; margin: 6px 0 0; }
+        details.adv { margin-top: 14px; }
+        details.adv > summary {
+            cursor: pointer; user-select: none;
+            font-size: 12px; font-weight: 600; color: #8fa8d8;
+            padding: 6px 0;
+        }
+        details.adv > summary:hover { color: #a8c8ff; }
+        details.adv .advbody {
+            padding: 2px 0 4px 14px;
+            border-left: 2px solid #3a3a48;
+            margin-top: 4px;
+        }
         .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
         .inline-check {
             display: flex; align-items: center; gap: 6px;
@@ -98,26 +110,27 @@
        <span style="color:#666; font-size:11px;">build {{ app_version }}</span></p>
 
     <form id="f">
-        <div class="row">
-            <div>
-                <label for="bank_name">Bank name</label>
-                <input type="text" id="bank_name" name="bank_name"
-                       placeholder="SoundBank" value="SoundBank">
-            </div>
-            <div>
+        <label for="bank_name">Bank name</label>
+        <input type="text" id="bank_name" name="bank_name"
+               placeholder="SoundBank" value="SoundBank">
+
+        <details class="adv">
+            <summary>Advanced bank options</summary>
+            <div class="advbody">
                 <label for="compression_preset">Compression</label>
                 <select id="compression_preset" name="compression_preset">
                     {% for p in presets %}
                     <option value="{{ p }}">{{ p }}</option>
                     {% endfor %}
                 </select>
-            </div>
-        </div>
+                <p class="hint">Vanilla FA uses &lt;none&gt; for every bank. Only worth changing for long music tracks.</p>
 
-        <div class="inline-check">
-            <input type="checkbox" id="streaming" name="streaming" value="1">
-            <label for="streaming" style="margin:0;">Streaming wave bank (for long music tracks)</label>
-        </div>
+                <div class="inline-check">
+                    <input type="checkbox" id="streaming" name="streaming" value="1">
+                    <label for="streaming" style="margin:0;">Streaming wave bank (for long music tracks)</label>
+                </div>
+            </div>
+        </details>
 
         <label for="waves">Audio files (multiple, up to 32)</label>
         <input type="file" id="waves" name="waves"
@@ -147,7 +160,7 @@ function catOptions() {
         const inGroup = CATEGORIES.filter(c => CATEGORY_INFO[c].group === g);
         if (!inGroup.length) return '';
         return `<optgroup label="${g}">` + inGroup.map(c => {
-            const sel = (c === 'Interface') ? ' selected' : '';
+            const sel = (c === 'Default') ? ' selected' : '';
             return `<option value="${c}"${sel}>${c}</option>`;
         }).join('') + '</optgroup>';
     }).join('');
@@ -173,85 +186,89 @@ filesInput.addEventListener('change', () => {
             <h3>${file.name}</h3>
             <div class="cue">cue name: <strong>${cue}</strong></div>
 
-            <label>Category</label>
-            <select name="category" class="catsel">
-                ${catOptions()}
-            </select>
-            <p class="hint cathint"></p>
+            <label>Volume: <span class="volout">0</span> dB</label>
+            <input type="range" class="volslider" name="volume_db"
+                   value="0" min="-30" max="12" step="0.5">
 
-            <div class="grid3">
-                <div>
-                    <label>Volume: <span class="volout">0</span> dB</label>
-                    <input type="range" class="volslider" name="volume_db"
-                           value="0" min="-30" max="12" step="0.5">
-                </div>
-                <div>
-                    <label>Pitch (semitones)</label>
-                    <input type="number" name="pitch" value="0" min="-12" max="12" step="0.01">
-                </div>
-                <div>
-                    <label>Priority</label>
-                    <input type="number" name="priority" value="0" min="0" max="255" step="1">
-                </div>
-            </div>
+            <details class="adv">
+                <summary>Advanced</summary>
+                <div class="advbody">
+                    <label>Category</label>
+                    <select name="category" class="catsel">
+                        ${catOptions()}
+                    </select>
+                    <p class="hint cathint"></p>
 
-            <fieldset>
-                <legend>Looping</legend>
-                <div class="grid3">
-                    <div>
-                        <label>Mode</label>
-                        <select name="loop_mode" class="loop-mode">
-                            <option value="none" selected>No loop</option>
-                            <option value="count">Loop N times</option>
-                            <option value="infinite">Infinite</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Loop count</label>
-                        <input type="number" name="loop_count" value="0" min="0" max="254" step="1">
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>Variation (randomised each play)</legend>
-
-                <div class="inline-check">
-                    <input type="checkbox" class="volvar-toggle">
-                    <input type="hidden" name="vol_var_enabled" value="0">
-                    <label style="margin:0;">Volume variation</label>
-                </div>
-                <div class="varbox volvar-box">
-                    <div class="grid4">
+                    <div class="grid3">
                         <div>
-                            <label>Min (dB)</label>
-                            <input type="number" name="vol_var_min" value="-2" min="-60" max="12" step="0.1">
+                            <label>Pitch (semitones)</label>
+                            <input type="number" name="pitch" value="0" min="-12" max="12" step="0.01">
                         </div>
                         <div>
-                            <label>Max (dB)</label>
-                            <input type="number" name="vol_var_max" value="0" min="-60" max="12" step="0.1">
+                            <label>Priority</label>
+                            <input type="number" name="priority" value="0" min="0" max="255" step="1">
                         </div>
                     </div>
-                </div>
 
-                <div class="inline-check">
-                    <input type="checkbox" class="pitchvar-toggle">
-                    <input type="hidden" name="pitch_var_enabled" value="0">
-                    <label style="margin:0;">Pitch variation</label>
-                </div>
-                <div class="varbox pitchvar-box">
-                    <div class="grid4">
-                        <div>
-                            <label>Min (semitones)</label>
-                            <input type="number" name="pitch_var_min" value="-1" min="-12" max="12" step="0.01">
+                    <fieldset>
+                        <legend>Looping</legend>
+                        <div class="grid3">
+                            <div>
+                                <label>Mode</label>
+                                <select name="loop_mode" class="loop-mode">
+                                    <option value="none" selected>No loop</option>
+                                    <option value="count">Loop N times</option>
+                                    <option value="infinite">Infinite</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Loop count</label>
+                                <input type="number" name="loop_count" value="0" min="0" max="254" step="1">
+                            </div>
                         </div>
-                        <div>
-                            <label>Max (semitones)</label>
-                            <input type="number" name="pitch_var_max" value="1" min="-12" max="12" step="0.01">
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Variation (randomised each play)</legend>
+
+                        <div class="inline-check">
+                            <input type="checkbox" class="volvar-toggle">
+                            <input type="hidden" name="vol_var_enabled" value="0">
+                            <label style="margin:0;">Volume variation</label>
                         </div>
-                    </div>
+                        <div class="varbox volvar-box">
+                            <div class="grid4">
+                                <div>
+                                    <label>Min (dB)</label>
+                                    <input type="number" name="vol_var_min" value="-2" min="-60" max="12" step="0.1">
+                                </div>
+                                <div>
+                                    <label>Max (dB)</label>
+                                    <input type="number" name="vol_var_max" value="0" min="-60" max="12" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="inline-check">
+                            <input type="checkbox" class="pitchvar-toggle">
+                            <input type="hidden" name="pitch_var_enabled" value="0">
+                            <label style="margin:0;">Pitch variation</label>
+                        </div>
+                        <div class="varbox pitchvar-box">
+                            <div class="grid4">
+                                <div>
+                                    <label>Min (semitones)</label>
+                                    <input type="number" name="pitch_var_min" value="-1" min="-12" max="12" step="0.01">
+                                </div>
+                                <div>
+                                    <label>Max (semitones)</label>
+                                    <input type="number" name="pitch_var_max" value="1" min="-12" max="12" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
-            </fieldset>
+            </details>
         `;
         filesDiv.appendChild(card);
 
@@ -287,7 +304,7 @@ filesInput.addEventListener('change', () => {
         const hint     = card.querySelector('.cathint');
         const loopMode = card.querySelector('.loop-mode');
 
-        function applyCategory() {
+        function applyCategory(initial) {
             const info = CATEGORY_INFO[sel.value];
             if (!info) return;
 
@@ -298,7 +315,7 @@ filesInput.addEventListener('change', () => {
 
             // Default the slider so the built-in category gain is cancelled
             // out: what you uploaded is roughly what you hear.
-            if (!volTouched) {
+            if (!volTouched && !initial) {
                 let target = -db;
                 target = Math.max(-30, Math.min(12, Math.round(target * 2) / 2));
                 vs.value = target;
@@ -316,8 +333,10 @@ filesInput.addEventListener('change', () => {
             hint.textContent = msg;
         }
 
-        sel.addEventListener('change', applyCategory);
-        applyCategory();
+        sel.addEventListener('change', () => applyCategory(false));
+        // Initial call only fills in the hint text; it must not move the
+        // volume slider, or the simple path shows a mystery number.
+        applyCategory(true);
     });
 });
 
