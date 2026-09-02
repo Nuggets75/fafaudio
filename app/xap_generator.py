@@ -1,269 +1,75 @@
 """
-Generate a XACT2 .xap project file.
+Generate a XACT2 .xap project file (August 2007 SDK, Content Version 43).
 
-Format is that of the August 2007 DirectX SDK (Signature = XACT2, Version = 16),
-which produces Content Version = 43 XWB files that FA/FAF accepts.
+The Global Settings block (categories, variables, RPC presets, compression
+presets) is taken verbatim from the official Supreme Commander XACT template
+published at gitlab.com/supreme-commander-forged-alliance/other/audio, so
+categories match what the game engine expects.
 
-Template values (quoting, per-block field order, Variable definitions,
-etc.) were taken from a known-working NameOrDeath.xap.
+Per-sound settings supported: category, volume, pitch, priority, loop count,
+volume variation, pitch variation.
 """
 
+import os
 from typing import List, Dict
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_GLOBAL_SETTINGS_PATH = os.path.join(_HERE, "templates_xact", "global_settings.txt")
 
-HEADER = """Signature = XACT2;
-Version = 16;
-Content Version = 43;
-Release = August 2007;
+with open(_GLOBAL_SETTINGS_PATH, "r", encoding="utf-8") as _fh:
+    GLOBAL_SETTINGS_TEMPLATE = _fh.read()
 
-Options
-{
-    Verbose Report = 0;
-    Generate C/C++ Headers = 1;
-}
+# Categories available in the FA template, in tree order.
+CATEGORIES = [
+    "Default", "Music", "World", "Units", "Ambient", "Weapons", "Destroy",
+    "Rumble", "Interface", "UnitsUEF", "UnitsAEON", "UnitsCYBRAN",
+    "UnitsUEFAir", "UnitsCYBRANAir", "UnitsAEONAir", "ActiveLoopsUEF",
+    "ActiveLoopsCYBRAN", "ActiveLoopsAEON", "UnitSelect", "FMV",
+    "Op_Briefing", "VO", "US", "DE", "ES", "FR", "IT", "RU", "PL", "CN",
+    "CZ", "KR", "Construction_Loops", "UnitsSeraphimAir", "UnitsSeraphim",
+    "ActiveLoopsSeraphim", "ConstructionSeraphim", "SeraphimSea",
+]
 
-Global Settings
-{
-    Xbox File = Xbox\\%s.xgs;
-    Windows File = Win\\%s.xgs;
-    Header File = %s.h;
-    Exclude Category Names = 0;
-    Exclude Variable Names = 0;
-    Last Modified Low = 0;
-    Last Modified High = 0;
+# Compression presets defined in the FA template ("<none>" = uncompressed PCM).
+COMPRESSION_PRESETS = ["<none>", "ADPCM 128", "ADPCM 256", "ADPCM 512"]
 
-    Category
-    {
-        Name = Global;
-        Public = 1;
-        Background Music = 0;
-        Volume = 0;
-
-        Category Entry
-        {
-        }
-
-        Instance Limit
-        {
-            Max Instances = 255;
-            Behavior = 0;
-
-            Crossfade
-            {
-                Fade In = 0;
-                Fade Out = 0;
-                Crossfade Type = 0;
-            }
-        }
-    }
-
-    Category
-    {
-        Name = Default;
-        Public = 1;
-        Background Music = 0;
-        Volume = 0;
-
-        Category Entry
-        {
-            Name = Global;
-        }
-
-        Instance Limit
-        {
-            Max Instances = 255;
-            Behavior = 0;
-
-            Crossfade
-            {
-                Fade In = 0;
-                Fade Out = 0;
-                Crossfade Type = 0;
-            }
-        }
-    }
-
-    Category
-    {
-        Name = Music;
-        Public = 1;
-        Background Music = 1;
-        Volume = 0;
-
-        Category Entry
-        {
-            Name = Global;
-        }
-
-        Instance Limit
-        {
-            Max Instances = 255;
-            Behavior = 0;
-
-            Crossfade
-            {
-                Fade In = 0;
-                Fade Out = 0;
-                Crossfade Type = 0;
-            }
-        }
-    }
-
-    Variable
-    {
-        Name = OrientationAngle;
-        Public = 1;
-        Global = 0;
-        Internal = 0;
-        External = 0;
-        Monitored = 1;
-        Reserved = 1;
-        Read Only = 0;
-        Time = 0;
-        Value = 0.000000;
-        Initial Value = 0.000000;
-        Min = -180.000000;
-        Max = 180.000000;
-    }
-
-    Variable
-    {
-        Name = DopplerPitchScalar;
-        Public = 1;
-        Global = 0;
-        Internal = 0;
-        External = 0;
-        Monitored = 1;
-        Reserved = 1;
-        Read Only = 0;
-        Time = 0;
-        Value = 1.000000;
-        Initial Value = 1.000000;
-        Min = 0.000000;
-        Max = 4.000000;
-    }
-
-    Variable
-    {
-        Name = SpeedOfSound;
-        Public = 1;
-        Global = 1;
-        Internal = 0;
-        External = 0;
-        Monitored = 1;
-        Reserved = 1;
-        Read Only = 0;
-        Time = 0;
-        Value = 343.500000;
-        Initial Value = 343.500000;
-        Min = 0.000000;
-        Max = 1000000.000000;
-    }
-
-    Variable
-    {
-        Name = ReleaseTime;
-        Public = 1;
-        Global = 0;
-        Internal = 1;
-        External = 1;
-        Monitored = 1;
-        Reserved = 1;
-        Read Only = 1;
-        Time = 1;
-        Value = 0.000000;
-        Initial Value = 0.000000;
-        Min = 0.000000;
-        Max = 15.000001;
-    }
-
-    Variable
-    {
-        Name = AttackTime;
-        Public = 1;
-        Global = 0;
-        Internal = 1;
-        External = 1;
-        Monitored = 1;
-        Reserved = 1;
-        Read Only = 1;
-        Time = 1;
-        Value = 0.000000;
-        Initial Value = 0.000000;
-        Min = 0.000000;
-        Max = 15.000001;
-    }
-
-    Variable
-    {
-        Name = NumCueInstances;
-        Public = 1;
-        Global = 0;
-        Internal = 1;
-        External = 1;
-        Monitored = 1;
-        Reserved = 1;
-        Read Only = 1;
-        Time = 0;
-        Value = 0.000000;
-        Initial Value = 0.000000;
-        Min = 0.000000;
-        Max = 1024.000000;
-    }
-
-    Variable
-    {
-        Name = Distance;
-        Public = 1;
-        Global = 0;
-        Internal = 0;
-        External = 0;
-        Monitored = 1;
-        Reserved = 1;
-        Read Only = 0;
-        Time = 0;
-        Value = 0.000000;
-        Initial Value = 0.000000;
-        Min = 0.000000;
-        Max = 1000000.000000;
-    }
-}
-"""
 
 WAVE_BANK_HEADER = """
 Wave Bank
 {
-    Name = %s;
-    Xbox File = Xbox\\%s.xwb;
-    Windows File = Win\\%s.xwb;
+    Name = %(bank)s;
+    Xbox File = Xbox\\%(bank)s.xwb;
+    Windows File = Win\\%(bank)s.xwb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
     Seek Tables = 1;
-    Compression Preset Name = <none>;
+    Compression Preset Name = %(preset)s;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
     PC Bank Last Modified Low = 0;
     PC Bank Last Modified High = 0;
+    Header Last Modified Low = 0;
+    Header Last Modified High = 0;
     Bank Last Revised Low = 0;
     Bank Last Revised High = 0;
-"""
+%(streaming)s"""
 
 WAVE_ENTRY_TEMPLATE = """
     Wave
     {
-        Name = %s;
-        File = %s;
+        Name = %(cue)s;
+        File = %(filename)s;
         Build Settings Last Modified Low = 0;
         Build Settings Last Modified High = 0;
 
         Cache
         {
             Format Tag = 0;
-            Channels = %d;
-            Sampling Rate = %d;
+            Channels = %(channels)d;
+            Sampling Rate = %(rate)d;
             Bits Per Sample = 1;
             Play Region Offset = 44;
-            Play Region Length = %d;
+            Play Region Length = %(data_length)d;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
@@ -278,9 +84,9 @@ WAVE_BANK_FOOTER = "}\n"
 SOUND_BANK_HEADER = """
 Sound Bank
 {
-    Name = %s;
-    Xbox File = Xbox\\%s.xsb;
-    Windows File = Win\\%s.xsb;
+    Name = %(bank)s;
+    Xbox File = Xbox\\%(bank)s.xsb;
+    Windows File = Win\\%(bank)s.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
     Bank Last Modified Low = 0;
@@ -289,114 +95,154 @@ Sound Bank
     Header Last Modified Low = 0;
 """
 
-SOUND_ENTRY_TEMPLATE = """
-    Sound
-    {
-        Name = %s;
-        Volume = %d;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaer Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = %s;
-                    Bank Index = 0;
-                    Entry Name = %s;
-                    Entry Index = %d;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-"""
-
-CUE_ENTRY_TEMPLATE = """
-    Cue
-    {
-        Name = %s;
-
-        Variation
-        {
-            Variation Type = 3;
-            Variation Table Type = 1;
-            New Variation on Loop = 0;
-        }
-
-        Sound Entry
-        {
-            Name = %s;
-            Index = %d;
-            Weight Min = 0;
-            Weight Max = 255;
-        }
-    }
-"""
-
 SOUND_BANK_FOOTER = "}\n"
 
 
-def generate_xap(bank_name: str, waves: List[Dict[str, str]],
-                 volume_mb: int = 0) -> str:
-    """
-    Build a full .xap project text based on the August 2007 XACT2 format.
+def _sound_block(s: Dict, bank_name: str, index: int) -> str:
+    """Render one Sound block with its per-file settings."""
+    cue = s["cue"]
+    lines = []
+    lines.append("\n    Sound\n    {")
+    lines.append("        Name = %s;" % cue)
+    lines.append("        Volume = %d;" % s.get("volume_mb", 0))
+    lines.append("        Pitch = %d;" % s.get("pitch", 0))
+    lines.append("        Priority = %d;" % s.get("priority", 0))
+    lines.append("")
+    lines.append("        Category Entry\n        {")
+    lines.append("            Name = %s;" % s.get("category", "Default"))
+    lines.append("        }")
+    lines.append("")
+    lines.append("        Track\n        {")
+    lines.append("            Volume = 0;")
+    lines.append("")
+    lines.append("            Play Wave Event\n            {")
 
-    Parameters
-    ----------
-    bank_name : identifier used for the Wave Bank and Sound Bank names,
-                and as the output file prefix
-    waves     : list of {"filename": "foo.wav", "cue": "foo",
-                          "channels": int, "rate": int, "data_length": int}
-    volume_mb : Volume in millibels applied to every Sound. 0 = as-recorded,
-                positive = louder, negative = quieter. XACT range roughly
-                -6000 to +1200.
+    # Loop Count comes first inside Play Wave Event when present.
+    loop_count = s.get("loop_count", 0)
+    if loop_count and loop_count > 0:
+        lines.append("                Loop Count = %d;" % loop_count)
 
-    Returns the .xap content as a string.
+    lines.append("                Break Loop = 0;")
+    lines.append("                Use Speaker Position = 0;")
+    lines.append("                Use Center Speaker = 1;")
+    lines.append("                New Speaker Position On Loop = 1;")
+    lines.append("                Speaker Position Angle = 0.000000;")
+    # NOTE: "Speaer" typo is present in the real XACT format; keep it.
+    lines.append("                Speaer Position Arc = 0.000000;")
+    lines.append("")
+    lines.append("                Event Header\n                {")
+    lines.append("                    Timestamp = 0;")
+    lines.append("                    Relative = 0;")
+    lines.append("                    Random Recurrence = 0;")
+    lines.append("                    Random Offset = 0;")
+    lines.append("                }")
+
+    # Pitch variation (semitones * 100 -> XACT units)
+    if s.get("pitch_var_enabled"):
+        lines.append("")
+        lines.append("                Pitch Variation\n                {")
+        lines.append("                    Min = %d;" % s.get("pitch_var_min", -100))
+        lines.append("                    Max = %d;" % s.get("pitch_var_max", 100))
+        lines.append("                    Operator = 0;")
+        lines.append("                    New Variation On Loop = 0;")
+        lines.append("                }")
+
+    # Volume variation (dB * 100 -> millibels)
+    if s.get("vol_var_enabled"):
+        lines.append("")
+        lines.append("                Volume Variation\n                {")
+        lines.append("                    Min = %d;" % s.get("vol_var_min", -200))
+        lines.append("                    Max = %d;" % s.get("vol_var_max", 0))
+        lines.append("                    Volume = 0;")
+        lines.append("                    New Variation On Loop = 0;")
+        lines.append("                }")
+
+    lines.append("")
+    lines.append("                Variation\n                {")
+    lines.append("                    Variation Type = 3;")
+    lines.append("                    Variation Table Type = 0;")
+    lines.append("                    New Variation on Loop = 0;")
+    lines.append("                }")
+    lines.append("")
+    lines.append("                Wave Entry\n                {")
+    lines.append("                    Bank Name = %s;" % bank_name)
+    lines.append("                    Bank Index = 0;")
+    lines.append("                    Entry Name = %s;" % cue)
+    lines.append("                    Entry Index = %d;" % index)
+    lines.append("                    Weight = 255;")
+    lines.append("                    Weight Min = 0;")
+    lines.append("                }")
+    lines.append("            }")
+    lines.append("        }")
+    lines.append("    }")
+    return "\n".join(lines) + "\n"
+
+
+def _cue_block(cue: str, index: int) -> str:
+    return (
+        "\n    Cue\n    {\n"
+        "        Name = %s;\n"
+        "\n"
+        "        Variation\n        {\n"
+        "            Variation Type = 3;\n"
+        "            Variation Table Type = 1;\n"
+        "            New Variation on Loop = 0;\n"
+        "        }\n"
+        "\n"
+        "        Sound Entry\n        {\n"
+        "            Name = %s;\n"
+        "            Index = %d;\n"
+        "            Weight Min = 0;\n"
+        "            Weight Max = 255;\n"
+        "        }\n"
+        "    }\n" % (cue, cue, index)
+    )
+
+
+def generate_xap(bank_name: str, waves: List[Dict],
+                 compression_preset: str = "<none>",
+                 streaming: bool = False) -> str:
     """
+    Build a full .xap project.
+
+    waves entries support these keys:
+        filename, cue, channels, rate, data_length   (required, set by server)
+        category          str, default "Default"
+        volume_mb         int millibels, default 0
+        pitch             int (semitones * 100), default 0
+        priority          int 0-255, default 0
+        loop_count        int, 0 = no loop, 255 = infinite
+        vol_var_enabled   bool
+        vol_var_min/max   int millibels
+        pitch_var_enabled bool
+        pitch_var_min/max int (semitones * 100)
+    """
+    if compression_preset not in COMPRESSION_PRESETS:
+        compression_preset = "<none>"
+
     parts = []
-    parts.append(HEADER % (bank_name, bank_name, bank_name))
+    parts.append(GLOBAL_SETTINGS_TEMPLATE % {"bank": bank_name})
 
-    parts.append(WAVE_BANK_HEADER % (bank_name, bank_name, bank_name))
+    parts.append(WAVE_BANK_HEADER % {
+        "bank": bank_name,
+        "preset": compression_preset,
+        "streaming": "    Streaming = 1;\n" if streaming else "",
+    })
     for w in waves:
-        parts.append(WAVE_ENTRY_TEMPLATE % (
-            w["cue"], w["filename"],
-            w.get("channels", 2), w.get("rate", 48000), w.get("data_length", 0),
-        ))
+        parts.append(WAVE_ENTRY_TEMPLATE % {
+            "cue": w["cue"],
+            "filename": w["filename"],
+            "channels": w.get("channels", 2),
+            "rate": w.get("rate", 48000),
+            "data_length": w.get("data_length", 0),
+        })
     parts.append(WAVE_BANK_FOOTER)
 
-    parts.append(SOUND_BANK_HEADER % (bank_name, bank_name, bank_name))
+    parts.append(SOUND_BANK_HEADER % {"bank": bank_name})
     for idx, w in enumerate(waves):
-        parts.append(
-            SOUND_ENTRY_TEMPLATE % (w["cue"], volume_mb, bank_name, w["cue"], idx)
-        )
+        parts.append(_sound_block(w, bank_name, idx))
     for idx, w in enumerate(waves):
-        parts.append(CUE_ENTRY_TEMPLATE % (w["cue"], w["cue"], idx))
+        parts.append(_cue_block(w["cue"], idx))
     parts.append(SOUND_BANK_FOOTER)
 
     return "".join(parts)

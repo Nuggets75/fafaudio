@@ -1,0 +1,2345 @@
+Signature = XACT2;
+Version = 16;
+Content Version = 43;
+Release = August 2007;
+
+Options
+{
+    Verbose Report = 0;
+    Generate C/C++ Headers = 1;
+}
+
+Global Settings
+{
+    Xbox File = Xbox\%(bank)s.xgs;
+    Windows File = Win\%(bank)s.xgs;
+    Header File = %(bank)s.h;
+    Exclude Category Names = 0;
+    Exclude Variable Names = 0;
+    Last Modified Low = 0;
+    Last Modified High = 0;
+
+    Category
+    {
+        Name = Global;
+        Comment = was +2;
+        Public = 1;
+        Background Music = 0;
+        Volume = 600;
+
+        Category Entry
+        {
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Default;
+        Public = 1;
+        Background Music = 0;
+        Volume = -200;
+
+        Category Entry
+        {
+            Name = Global;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Music;
+        Comment = -2 9-30-06 12-7-06  was -5;
+        Public = 1;
+        Background Music = 1;
+        Volume = 0;
+
+        Category Entry
+        {
+            Name = Global;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 1;
+            Behavior = 2;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 200;
+                Crossfade Type = 1;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = World;
+        Comment = was 3;
+        Public = 1;
+        Background Music = 0;
+        Volume = 200;
+
+        Category Entry
+        {
+            Name = Global;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 200;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 100;
+                Crossfade Type = 1;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Units;
+        Public = 1;
+        Background Music = 0;
+        Volume = 0;
+
+        Category Entry
+        {
+            Name = World;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Ambient;
+        Public = 1;
+        Background Music = 0;
+        Volume = -200;
+
+        Category Entry
+        {
+            Name = World;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 1000;
+                Fade Out = 1000;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Weapons;
+        Public = 1;
+        Background Music = 0;
+        Volume = 0;
+
+        Category Entry
+        {
+            Name = World;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 150;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Destroy;
+        Comment = was 0;
+        Public = 1;
+        Background Music = 0;
+        Volume = 100;
+
+        Category Entry
+        {
+            Name = World;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 100;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Rumble;
+        Public = 1;
+        Background Music = 0;
+        Volume = 0;
+
+        Category Entry
+        {
+            Name = World;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Interface;
+        Public = 1;
+        Background Music = 0;
+        Volume = -500;
+
+        Category Entry
+        {
+            Name = Global;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = UnitsUEF;
+        Public = 1;
+        Background Music = 0;
+        Volume = -200;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = UnitsAEON;
+        Public = 1;
+        Background Music = 0;
+        Volume = -200;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = UnitsCYBRAN;
+        Public = 1;
+        Background Music = 0;
+        Volume = -200;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = UnitsUEFAir;
+        Comment = was -5;
+        Public = 1;
+        Background Music = 0;
+        Volume = -800;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = UnitsCYBRANAir;
+        Comment = was -3;
+        Public = 1;
+        Background Music = 0;
+        Volume = -600;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = UnitsAEONAir;
+        Public = 1;
+        Background Music = 0;
+        Volume = -400;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = ActiveLoopsUEF;
+        Comment = was -8;
+        Public = 1;
+        Background Music = 0;
+        Volume = -600;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = ActiveLoopsCYBRAN;
+        Comment = was -8;
+        Public = 1;
+        Background Music = 0;
+        Volume = -600;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = ActiveLoopsAEON;
+        Comment = was -8;
+        Public = 1;
+        Background Music = 0;
+        Volume = -600;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Unit Select;
+        Public = 1;
+        Background Music = 0;
+        Volume = 200;
+
+        Category Entry
+        {
+            Name = Interface;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = FMV;
+        Public = 1;
+        Background Music = 0;
+        Volume = -400;
+
+        Category Entry
+        {
+            Name = Global;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Op_Briefing;
+        Public = 1;
+        Background Music = 0;
+        Volume = 0;
+
+        Category Entry
+        {
+            Name = Global;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = VO;
+        Public = 1;
+        Background Music = 0;
+        Volume = 0;
+
+        Category Entry
+        {
+            Name = Global;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = US;
+        Comment = was -7;
+        Public = 1;
+        Background Music = 0;
+        Volume = -580;
+
+        Category Entry
+        {
+            Name = VO;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = DE;
+        Comment = was -14 was -12;
+        Public = 1;
+        Background Music = 0;
+        Volume = -900;
+
+        Category Entry
+        {
+            Name = VO;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = ES;
+        Comment = was -10.5;
+        Public = 1;
+        Background Music = 0;
+        Volume = -750;
+
+        Category Entry
+        {
+            Name = VO;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = FR;
+        Comment = was -13;
+        Public = 1;
+        Background Music = 0;
+        Volume = -1000;
+
+        Category Entry
+        {
+            Name = VO;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = IT;
+        Comment = was -11;
+        Public = 1;
+        Background Music = 0;
+        Volume = -900;
+
+        Category Entry
+        {
+            Name = VO;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = RU;
+        Comment = was-10 was -8;
+        Public = 1;
+        Background Music = 0;
+        Volume = -700;
+
+        Category Entry
+        {
+            Name = VO;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = PL;
+        Public = 1;
+        Background Music = 0;
+        Volume = -1000;
+
+        Category Entry
+        {
+            Name = VO;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = CN;
+        Public = 1;
+        Background Music = 0;
+        Volume = -1000;
+
+        Category Entry
+        {
+            Name = VO;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = CZ;
+        Public = 1;
+        Background Music = 0;
+        Volume = -1000;
+
+        Category Entry
+        {
+            Name = VO;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = KR;
+        Public = 1;
+        Background Music = 0;
+        Volume = -1000;
+
+        Category Entry
+        {
+            Name = VO;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 255;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = Construction_Loops;
+        Comment = -5;
+        Public = 1;
+        Background Music = 0;
+        Volume = -300;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = UnitsSeraphimAir;
+        Comment = was -2;
+        Public = 1;
+        Background Music = 0;
+        Volume = 0;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = UnitsSeraphim;
+        Public = 1;
+        Background Music = 0;
+        Volume = -400;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = ActiveLoopsSeraphim;
+        Public = 1;
+        Background Music = 0;
+        Volume = -500;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 60;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = ConstructionSeraphim;
+        Public = 1;
+        Background Music = 0;
+        Volume = -500;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 30;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Category
+    {
+        Name = SeraphimSea;
+        Comment = 10-3-07 was -4;
+        Public = 1;
+        Background Music = 0;
+        Volume = -200;
+
+        Category Entry
+        {
+            Name = Units;
+        }
+
+        Instance Limit
+        {
+            Max Instances = 30;
+            Behavior = 0;
+
+            Crossfade
+            {
+                Fade In = 0;
+                Fade Out = 0;
+                Crossfade Type = 0;
+            }
+        }
+    }
+
+    Variable
+    {
+        Name = OrientationAngle;
+        Public = 1;
+        Global = 0;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = -180.000000;
+        Max = 180.000000;
+    }
+
+    Variable
+    {
+        Name = DopplerPitchScalar;
+        Public = 1;
+        Global = 0;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 1.000000;
+        Initial Value = 1.000000;
+        Min = 0.000000;
+        Max = 4.000000;
+    }
+
+    Variable
+    {
+        Name = SpeedOfSound;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 343.500000;
+        Initial Value = 343.500000;
+        Min = 0.000000;
+        Max = 1000000.000000;
+    }
+
+    Variable
+    {
+        Name = ReleaseTime;
+        Public = 1;
+        Global = 0;
+        Internal = 1;
+        External = 1;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 1;
+        Time = 1;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 15.000001;
+    }
+
+    Variable
+    {
+        Name = AttackTime;
+        Public = 1;
+        Global = 0;
+        Internal = 1;
+        External = 1;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 1;
+        Time = 1;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 15.000001;
+    }
+
+    Variable
+    {
+        Name = NumCueInstances;
+        Public = 1;
+        Global = 0;
+        Internal = 1;
+        External = 1;
+        Monitored = 1;
+        Reserved = 1;
+        Read Only = 1;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 1024.000000;
+    }
+
+    Variable
+    {
+        Name = Distance;
+        Public = 1;
+        Global = 0;
+        Internal = 0;
+        External = 1;
+        Monitored = 0;
+        Reserved = 1;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 10000.000000;
+    }
+
+    Variable
+    {
+        Name = Weapon_LodCutoff;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 10000.000000;
+        Initial Value = 10000.000000;
+        Min = -1.000000;
+        Max = 10000.000000;
+    }
+
+    Variable
+    {
+        Name = UnitMove_LodCutoff;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 10000.000000;
+        Initial Value = 10000.000000;
+        Min = -1.000000;
+        Max = 10000.000000;
+    }
+
+    Variable
+    {
+        Name = DefaultLodCutoff;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = -1.000000;
+        Initial Value = -1.000000;
+        Min = -1.000000;
+        Max = 10000.000000;
+    }
+
+    Variable
+    {
+        Name = UnitRumble_LodCutoff;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 256.000000;
+        Initial Value = 100.000000;
+        Min = -1.000000;
+        Max = 10000.000000;
+    }
+
+    Variable
+    {
+        Name = Rumble1;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 10.000000;
+    }
+
+    Variable
+    {
+        Name = WeaponBig_LodCutoff;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 10000.000000;
+        Initial Value = 10000.000000;
+        Min = -1.000000;
+        Max = 10000.000000;
+    }
+
+    Variable
+    {
+        Name = UAL_Rumble1;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 1;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 10.000000;
+    }
+
+    Variable
+    {
+        Name = UES_Rumble1;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 1;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 10.000000;
+    }
+
+    Variable
+    {
+        Name = URA_Rumble1;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 1;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 10.000000;
+    }
+
+    Variable
+    {
+        Name = UEL_RumbleTanks1;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 1;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 10.000000;
+    }
+
+    Variable
+    {
+        Name = CameraDistance;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 1;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 576.760559;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 100000.000000;
+    }
+
+    Variable
+    {
+        Name = Duck;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 1;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.000000;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 1.000000;
+    }
+
+    Variable
+    {
+        Name = DuckLength;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 0;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 0.500000;
+        Initial Value = 0.500000;
+        Min = 0.000000;
+        Max = 10.000000;
+    }
+
+    Variable
+    {
+        Name = ZoomPercent;
+        Public = 1;
+        Global = 1;
+        Internal = 0;
+        External = 1;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 75.785828;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 100.000000;
+    }
+
+    Variable
+    {
+        Name = Angle;
+        Public = 1;
+        Global = 0;
+        Internal = 0;
+        External = 1;
+        Monitored = 1;
+        Reserved = 0;
+        Read Only = 0;
+        Time = 0;
+        Value = 32.641476;
+        Initial Value = 0.000000;
+        Min = 0.000000;
+        Max = 180.000000;
+    }
+
+    RPC
+    {
+        Name = Rumble1;
+
+        RPC Curve
+        {
+            Name = Sound::aff0ac80-3879-45ae-90bc-62cfbc3d9411;
+            Property = 0;
+            Sound = 1;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = Rumble1;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 10.000000;
+                Y = -1215.030151;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = UAL_Rumble1;
+
+        RPC Curve
+        {
+            Name = Sound::86fbcc8a-1344-4a8f-a3f2-ae853901daa9;
+            Property = 0;
+            Sound = 1;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = UAL_Rumble1;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 10.000000;
+                Y = -11.030121;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = UES_Rumble1;
+
+        RPC Curve
+        {
+            Name = Sound::85071964-7d79-4647-9fea-2aada661c7da;
+            Property = 0;
+            Sound = 1;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = UES_Rumble1;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 10.000000;
+                Y = -11.030121;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = URA_Rumble1;
+
+        RPC Curve
+        {
+            Name = Sound::7ab47747-2443-4662-9652-e889e8641b13;
+            Property = 0;
+            Sound = 1;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = URA_Rumble1;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 10.000000;
+                Y = -11.030121;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = UEL_Rumble1;
+
+        RPC Curve
+        {
+            Name = Sound::1e0bae8f-4b2e-4535-b777-26a65f1941d1;
+            Property = 0;
+            Sound = 1;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = UEL_RumbleTanks1;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 10.000000;
+                Y = -22.959869;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = Attenuation;
+
+        RPC Curve
+        {
+            Name = Sound::6543c61c-b2ac-439c-9bb9-afff2533fcdc;
+            Property = 0;
+            Sound = 1;
+            Line Color = 4287062800;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = Distance;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = 0.660400;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 794.044678;
+                Y = -2410.416504;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 2531.017334;
+                Y = -4854.166992;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 3449.131592;
+                Y = -9387.500000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 3746.898193;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = Attenuation Weapons;
+
+        RPC Curve
+        {
+            Name = Sound::e9577e23-5a70-4800-8372-fdb6a45e8670;
+            Property = 0;
+            Sound = 1;
+            Line Color = 4287389511;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = Distance;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -11.030121;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 543.018311;
+                Y = -1049.638062;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 2506.203369;
+                Y = -1560.416748;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 4565.756836;
+                Y = -2500.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 6501.240723;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = AttackRelease_UnitMovement_Short;
+
+        RPC Curve
+        {
+            Name = 1::0a710914-396d-4003-a703-0823046459f3;
+            Property = 0;
+            Sound = 0;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = AttackTime;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 80.000000;
+                Y = -2446.113281;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 181.000061;
+                Y = -1315.924561;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 412.000122;
+                Y = -641.452881;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 666.000244;
+                Y = -257.278046;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 1000.000244;
+                Y = -2.003937;
+                Curve = 0;
+            }
+        }
+
+        RPC Curve
+        {
+            Name = 1::58b7ba3e-fd19-48c6-8eee-9abdd87892a1;
+            Property = 0;
+            Sound = 0;
+            Line Color = 4294901760;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = ReleaseTime;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = 0.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 2991.000977;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = Attenuation Destroy;
+
+        RPC Curve
+        {
+            Name = Sound::2cf61f13-6a2f-4c4a-8a51-13dffa825583;
+            Property = 0;
+            Sound = 1;
+            Line Color = 4289126945;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = Distance;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = 30.113205;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 87.189804;
+                Y = -5.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 326.704559;
+                Y = -648.145691;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 3101.737061;
+                Y = -2800.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 4863.523438;
+                Y = -4145.833008;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 6129.032227;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = Attenuation Close Up;
+
+        RPC Curve
+        {
+            Name = Sound::aea85444-4208-4f5e-8ecc-89b805d7a018;
+            Property = 0;
+            Sound = 1;
+            Line Color = 4293620379;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = Distance;
+            }
+
+            RPC Point
+            {
+                X = 20.120724;
+                Y = -2.169800;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 198.511169;
+                Y = -462.500000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 500.000000;
+                Y = -2587.500000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 2456.575684;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = MusicRelease;
+
+        RPC Curve
+        {
+            Name = 1::80e5f50f-34a8-46a0-bb1a-b122b5d63636;
+            Property = 0;
+            Sound = 0;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = ReleaseTime;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = 0.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 1592.000488;
+                Y = -236.256271;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 3030.000977;
+                Y = -721.437195;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 4700.000000;
+                Y = -2021.542603;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 6061.001953;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = Attenuation ZoomOut;
+
+        RPC Curve
+        {
+            Name = Sound::934826ca-0b9d-4d69-9782-256e9858eae5;
+            Property = 0;
+            Sound = 1;
+            Line Color = 4283513994;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = Distance;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = 0.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 325.342468;
+                Y = -337.281372;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = AttackRelease2_Building_Weapons_Long;
+
+        RPC Curve
+        {
+            Name = 1::c3141ed9-23cb-4360-9e18-ec793f19b71f;
+            Property = 0;
+            Sound = 0;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = AttackTime;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 71.000000;
+                Y = -1799.170654;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 150.000000;
+                Y = -798.276367;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 292.000000;
+                Y = -236.256271;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 532.000000;
+                Y = 1.783905;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 14999.003906;
+                Y = 0.000000;
+                Curve = 0;
+            }
+        }
+
+        RPC Curve
+        {
+            Name = 1::4f2ed451-43ee-473d-b1bd-216ceb657b9b;
+            Property = 0;
+            Sound = 0;
+            Line Color = 4294901760;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = ReleaseTime;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = 0.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 1012.000244;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = Attenuation Close Up Micro;
+
+        RPC Curve
+        {
+            Name = Sound::770c63c4-0ca9-466d-8932-6fd8773f44f1;
+            Property = 0;
+            Sound = 1;
+            Line Color = 4292556404;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = Distance;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = 0.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 92.685951;
+                Y = -1146.910645;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 106.419502;
+                Y = -1802.296875;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 144.181259;
+                Y = -3086.585693;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 181.943008;
+                Y = -9600.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = Duck;
+
+        RPC Curve
+        {
+            Name = Sound::9491a589-b246-4243-b529-19db44bf3a60;
+            Property = 0;
+            Sound = 1;
+            Line Color = 4288862961;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = Duck;
+            }
+
+            RPC Point
+            {
+                X = 0.001733;
+                Y = 1.783905;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 0.528536;
+                Y = -1000.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = Global_Ambient_Rumble_Zoom;
+
+        RPC Curve
+        {
+            Name = Sound::ea07376f-dfbc-440e-abd6-08cf823b5ade;
+            Property = 0;
+            Sound = 1;
+            Line Color = 4291469915;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = CameraDistance;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = -2044.047974;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 323.834198;
+                Y = -1357.583374;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 841.968872;
+                Y = -977.091431;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 1360.103638;
+                Y = -670.111206;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 1813.471436;
+                Y = -408.857300;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 3659.326416;
+                Y = -0.436554;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = Angle_Attenuation;
+
+        RPC Curve
+        {
+            Name = Sound::053e69d6-25b1-4583-9705-514f96ff9565;
+            Property = 0;
+            Sound = 1;
+            Line Color = 4283381679;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = Angle;
+            }
+
+            RPC Point
+            {
+                X = 0.937386;
+                Y = 1.783905;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 45.233967;
+                Y = -612.969910;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 90.155975;
+                Y = -2021.542603;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 118.856148;
+                Y = -461.904419;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 180.000000;
+                Y = -22.959869;
+                Curve = 0;
+            }
+        }
+    }
+
+    RPC
+    {
+        Name = Music Att;
+
+        RPC Curve
+        {
+            Name = Sound::43332255-df05-4bf6-b63c-1755fd178042;
+            Property = 0;
+            Sound = 1;
+            Line Color = 4288885614;
+            Viewable = 1;
+
+            Variable Entry
+            {
+                Name = Distance;
+            }
+
+            RPC Point
+            {
+                X = 0.000000;
+                Y = 0.000000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 2258.064453;
+                Y = -4606.250000;
+                Curve = 0;
+            }
+
+            RPC Point
+            {
+                X = 7245.657715;
+                Y = -4500.000000;
+                Curve = 0;
+            }
+        }
+    }
+
+    Compression Preset
+    {
+        Name = ADPCM 256;
+        Xbox Format Tag = 357;
+        Target Sample Rate = 48000;
+        Quality = 75;
+        Find Best Quality = 0;
+        High Freq Cut = 0;
+        Loop = 0;
+        PC Format Tag = 2;
+        Samples Per Block = 256;
+    }
+
+    Compression Preset
+    {
+        Name = ADPCM 512;
+        Xbox Format Tag = 357;
+        Target Sample Rate = 48000;
+        Quality = 75;
+        Find Best Quality = 0;
+        High Freq Cut = 0;
+        Loop = 0;
+        PC Format Tag = 2;
+        Samples Per Block = 512;
+    }
+
+    Compression Preset
+    {
+        Name = ADPCM 128;
+        Xbox Format Tag = 357;
+        Target Sample Rate = 48000;
+        Quality = 60;
+        Find Best Quality = 0;
+        High Freq Cut = 0;
+        Loop = 0;
+        PC Format Tag = 2;
+        Samples Per Block = 128;
+    }
+}

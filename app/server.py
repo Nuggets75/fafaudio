@@ -20,7 +20,7 @@ from flask import (Flask, jsonify, redirect, render_template, request,
                    send_file, session, url_for)
 from werkzeug.utils import secure_filename
 
-from xap_generator import generate_xap
+from xap_generator import generate_xap, CATEGORIES, COMPRESSION_PRESETS
 
 # =====================================================================
 # Config
@@ -206,7 +206,9 @@ def health():
 @app.route("/")
 @require_login
 def index():
-    return render_template("index.html")
+    return render_template("index.html",
+                           categories=CATEGORIES,
+                           presets=COMPRESSION_PRESETS)
 
 
 @app.route("/build", methods=["POST"])
@@ -220,14 +222,8 @@ def build():
 
     bank_name = sanitize_name(request.form.get("bank_name", ""), "SoundBank")
 
-    # Volume in dB, clamped to a safe range. Converted to millibels
-    # (XACT's unit) by *100. 0 = as-recorded; positive = louder.
-    try:
-        volume_db = int(request.form.get("volume_db", "0"))
-    except ValueError:
-        volume_db = 0
-    volume_db = max(-30, min(12, volume_db))
-    volume_mb = volume_db * 100
+    compression_preset = request.form.get("compression_preset", "<none>")
+    streaming = request.form.get("streaming") == "1"
 
     workdir = tempfile.mkdtemp(prefix="xact-")
     try:
@@ -268,15 +264,65 @@ def build():
                 pass
 
             channels, rate, data_length = read_wav_info(wav_path)
+
+            # Per-file settings arrive as arrays parallel to the file list.
+            i = len(wave_entries)
+
+            def field(name, default, cast=int, lo=None, hi=None):
+                vals = request.form.getlist(name)
+                raw = vals[i] if i < len(vals) else None
+                if raw is None or raw == "":
+                    return default
+                try:
+                    v = cast(raw)
+                except (ValueError, TypeError):
+                    return default
+                if lo is not None:
+                    v = max(lo, v)
+                if hi is not None:
+                    v = min(hi, v)
+                return v
+
+            def flag(name):
+                vals = request.form.getlist(name)
+                return (vals[i] if i < len(vals) else "0") == "1"
+
+            cat_vals = request.form.getlist("category")
+            category = cat_vals[i] if i < len(cat_vals) else "Default"
+            if category not in CATEGORIES:
+                category = "Default"
+
+            loop_mode_vals = request.form.getlist("loop_mode")
+            loop_mode = loop_mode_vals[i] if i < len(loop_mode_vals) else "none"
+            if loop_mode == "infinite":
+                loop_count = 255
+            elif loop_mode == "count":
+                loop_count = field("loop_count", 0, int, 0, 254)
+            else:
+                loop_count = 0
+
             wave_entries.append({
                 "filename": wav_filename,
                 "cue": unique,
                 "channels": channels,
                 "rate": rate,
                 "data_length": data_length,
+                "category": category,
+                "volume_mb": field("volume_db", 0, int, -60, 12) * 100,
+                "pitch": field("pitch", 0, int, -1200, 1200),
+                "priority": field("priority", 0, int, 0, 255),
+                "loop_count": loop_count,
+                "vol_var_enabled": flag("vol_var_enabled"),
+                "vol_var_min": field("vol_var_min", -2, int, -60, 12) * 100,
+                "vol_var_max": field("vol_var_max", 0, int, -60, 12) * 100,
+                "pitch_var_enabled": flag("pitch_var_enabled"),
+                "pitch_var_min": field("pitch_var_min", -1, int, -12, 12) * 100,
+                "pitch_var_max": field("pitch_var_max", 1, int, -12, 12) * 100,
             })
 
-        xap_text = generate_xap(bank_name, wave_entries, volume_mb=volume_mb)
+        xap_text = generate_xap(bank_name, wave_entries,
+                                compression_preset=compression_preset,
+                                streaming=streaming)
         xap_path = os.path.join(workdir, f"{bank_name}.xap")
         with open(xap_path, "w", encoding="utf-8") as fh:
             fh.write(xap_text)
@@ -330,7 +376,7 @@ def build():
                 jsonify(
                     error="XactBld did not produce all 3 output files "
                     "(.xwb, .xsb, .xgs). See diagnostic output below.",
-                    version="v8-ffmpeg",
+                    version="v9-per-file-settings",
                     command=" ".join(cmd),
                     workdir_contents=os.listdir(workdir),
                     win_dir_contents=os.listdir(os.path.join(workdir, "Win"))
