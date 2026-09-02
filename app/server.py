@@ -27,6 +27,8 @@ from xap_generator import (generate_xap, CATEGORIES, COMPRESSION_PRESETS,
 # Config
 # =====================================================================
 
+APP_VERSION = "v14-category-guidance"
+
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
 if not ADMIN_PASSWORD:
     raise RuntimeError(
@@ -196,6 +198,7 @@ def health():
     xactbld_ok = os.path.exists(XACTBLD_EXE) or os.path.exists(XACTBLD_FALLBACK)
     return jsonify(
         {
+            "version": APP_VERSION,
             "ok": xactbld_ok,
             "xactbld_path": XACTBLD_EXE if os.path.exists(XACTBLD_EXE) else (
                 XACTBLD_FALLBACK if os.path.exists(XACTBLD_FALLBACK) else None
@@ -211,7 +214,8 @@ def index():
                            categories=CATEGORIES,
                            category_info=CATEGORY_INFO,
                            group_order=GROUP_ORDER,
-                           presets=COMPRESSION_PRESETS)
+                           presets=COMPRESSION_PRESETS,
+                           app_version=APP_VERSION)
 
 
 @app.route("/build", methods=["POST"])
@@ -379,7 +383,7 @@ def build():
                 jsonify(
                     error="XactBld did not produce all 3 output files "
                     "(.xwb, .xsb, .xgs). See diagnostic output below.",
-                    version="v13-category-guidance",
+                    version=APP_VERSION,
                     command=" ".join(cmd),
                     workdir_contents=os.listdir(workdir),
                     win_dir_contents=os.listdir(os.path.join(workdir, "Win"))
