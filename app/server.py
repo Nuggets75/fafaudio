@@ -20,7 +20,8 @@ from flask import (Flask, jsonify, redirect, render_template, request,
                    send_file, session, url_for)
 from werkzeug.utils import secure_filename
 
-from xap_generator import generate_xap, CATEGORIES, COMPRESSION_PRESETS
+from xap_generator import (generate_xap, CATEGORIES, COMPRESSION_PRESETS,
+                           CATEGORY_INFO, GROUP_ORDER)
 
 # =====================================================================
 # Config
@@ -208,6 +209,8 @@ def health():
 def index():
     return render_template("index.html",
                            categories=CATEGORIES,
+                           category_info=CATEGORY_INFO,
+                           group_order=GROUP_ORDER,
                            presets=COMPRESSION_PRESETS)
 
 
@@ -308,16 +311,16 @@ def build():
                 "rate": rate,
                 "data_length": data_length,
                 "category": category,
-                "volume_mb": field("volume_db", 0, int, -60, 12) * 100,
-                "pitch": field("pitch", 0, int, -1200, 1200),
+                "volume_mb": int(round(field("volume_db", 0.0, float, -60.0, 12.0) * 100)),
+                "pitch": int(round(field("pitch", 0.0, float, -12.0, 12.0) * 100)),
                 "priority": field("priority", 0, int, 0, 255),
                 "loop_count": loop_count,
                 "vol_var_enabled": flag("vol_var_enabled"),
-                "vol_var_min": field("vol_var_min", -2, int, -60, 12) * 100,
-                "vol_var_max": field("vol_var_max", 0, int, -60, 12) * 100,
+                "vol_var_min": int(round(field("vol_var_min", -2.0, float, -60.0, 12.0) * 100)),
+                "vol_var_max": int(round(field("vol_var_max", 0.0, float, -60.0, 12.0) * 100)),
                 "pitch_var_enabled": flag("pitch_var_enabled"),
-                "pitch_var_min": field("pitch_var_min", -1, int, -12, 12) * 100,
-                "pitch_var_max": field("pitch_var_max", 1, int, -12, 12) * 100,
+                "pitch_var_min": int(round(field("pitch_var_min", -1.0, float, -12.0, 12.0) * 100)),
+                "pitch_var_max": int(round(field("pitch_var_max", 1.0, float, -12.0, 12.0) * 100)),
             })
 
         xap_text = generate_xap(bank_name, wave_entries,
@@ -376,7 +379,7 @@ def build():
                 jsonify(
                     error="XactBld did not produce all 3 output files "
                     "(.xwb, .xsb, .xgs). See diagnostic output below.",
-                    version="v9-per-file-settings",
+                    version="v13-category-guidance",
                     command=" ".join(cmd),
                     workdir_contents=os.listdir(workdir),
                     win_dir_contents=os.listdir(os.path.join(workdir, "Win"))

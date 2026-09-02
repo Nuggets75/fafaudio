@@ -11,6 +11,7 @@ volume variation, pitch variation.
 """
 
 import os
+import re
 from typing import List, Dict
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -19,16 +20,129 @@ _GLOBAL_SETTINGS_PATH = os.path.join(_HERE, "templates_xact", "global_settings.t
 with open(_GLOBAL_SETTINGS_PATH, "r", encoding="utf-8") as _fh:
     GLOBAL_SETTINGS_TEMPLATE = _fh.read()
 
-# Categories available in the FA template, in tree order.
+# Categories available in the FA template, parsed from the template itself
+# so the names can never drift from what the engine actually defines.
+# "Global" is the root and is excluded (it is every category's ancestor).
 CATEGORIES = [
-    "Default", "Music", "World", "Units", "Ambient", "Weapons", "Destroy",
-    "Rumble", "Interface", "UnitsUEF", "UnitsAEON", "UnitsCYBRAN",
-    "UnitsUEFAir", "UnitsCYBRANAir", "UnitsAEONAir", "ActiveLoopsUEF",
-    "ActiveLoopsCYBRAN", "ActiveLoopsAEON", "UnitSelect", "FMV",
-    "Op_Briefing", "VO", "US", "DE", "ES", "FR", "IT", "RU", "PL", "CN",
-    "CZ", "KR", "Construction_Loops", "UnitsSeraphimAir", "UnitsSeraphim",
-    "ActiveLoopsSeraphim", "ConstructionSeraphim", "SeraphimSea",
+    _m for _m in re.findall(
+        r"    Category\n    \{\n        Name = ([^;]+);", GLOBAL_SETTINGS_TEMPLATE
+    ) if _m != "Global"
 ]
+
+
+# ---------------------------------------------------------------------------
+# Category metadata for the UI.
+#
+# `cum_db`  = the volume this category adds, including its parent chain, in dB.
+#             The engine applies this on top of the per-sound volume, so a
+#             sound in "Destroy" is 9 dB louder than the same file in a
+#             0 dB category.
+# `max`     = how many sounds of this category may play at once.
+# `loop`    = category is normally used for continuous looping sounds.
+# `group`   = grouping used by the dropdown.
+# `desc`    = one-line plain-English description.
+#
+# cum_db and max are parsed from the template; the rest is guidance.
+# ---------------------------------------------------------------------------
+
+def _parse_category_stats(text):
+    blocks = re.findall(r"    Category\n    \{(.*?)\n    \}\n", text, re.S)
+    raw = {}
+    for b in blocks:
+        n = re.search(r"Name = ([^;]+);", b)
+        v = re.search(r"Volume = (-?\d+);", b)
+        m = re.search(r"Max Instances = (\d+);", b)
+        par = re.search(
+            r"Category Entry\n        \{\n            Name = ([^;]+);", b)
+        if n:
+            raw[n.group(1)] = {
+                "vol": int(v.group(1)) if v else 0,
+                "max": int(m.group(1)) if m else 255,
+                "parent": par.group(1) if par else None,
+            }
+
+    def cumulative(name, seen=None):
+        seen = seen or set()
+        if name in seen or name not in raw:
+            return 0
+        seen.add(name)
+        entry = raw[name]
+        parent_db = cumulative(entry["parent"], seen) if entry["parent"] else 0
+        return entry["vol"] + parent_db
+
+    return {
+        name: {"cum_db": cumulative(name) / 100.0, "max": raw[name]["max"]}
+        for name in raw
+    }
+
+
+_STATS = _parse_category_stats(GLOBAL_SETTINGS_TEMPLATE)
+
+_DESCRIPTIONS = {
+    "Interface":   ("Common", "UI feedback: clicks, alerts, notifications. Best default for mod sounds."),
+    "Unit Select": ("Common", "The blip when you select a unit."),
+    "Default":     ("Common", "Generic catch-all. Fine when nothing else fits."),
+    "Music":       ("Common", "Music tracks. Only ONE can play at a time."),
+    "Ambient":     ("Common", "Background environment loops (wind, water)."),
+    "Weapons":     ("Common", "Weapon fire."),
+    "Destroy":     ("Common", "Explosions and unit deaths. Loudest category."),
+
+    "UnitsUEF":       ("Unit sounds", "UEF ground unit sounds."),
+    "UnitsAEON":      ("Unit sounds", "Aeon ground unit sounds."),
+    "UnitsCYBRAN":    ("Unit sounds", "Cybran ground unit sounds."),
+    "UnitsSeraphim":  ("Unit sounds", "Seraphim ground unit sounds."),
+    "UnitsUEFAir":    ("Unit sounds", "UEF aircraft sounds."),
+    "UnitsAEONAir":   ("Unit sounds", "Aeon aircraft sounds."),
+    "UnitsCYBRANAir": ("Unit sounds", "Cybran aircraft sounds."),
+    "UnitsSeraphimAir": ("Unit sounds", "Seraphim aircraft sounds."),
+    "SeraphimSea":    ("Unit sounds", "Seraphim naval unit sounds."),
+
+    "ActiveLoopsUEF":      ("Looping unit sounds", "UEF engine/movement loops."),
+    "ActiveLoopsAEON":     ("Looping unit sounds", "Aeon engine/movement loops."),
+    "ActiveLoopsCYBRAN":   ("Looping unit sounds", "Cybran engine/movement loops."),
+    "ActiveLoopsSeraphim": ("Looping unit sounds", "Seraphim engine/movement loops."),
+    "Construction_Loops":  ("Looping unit sounds", "Building/construction loops."),
+    "ConstructionSeraphim":("Looping unit sounds", "Seraphim construction loops."),
+
+    "VO":          ("Voice and cinematic", "Voiceover parent. Pick a language below instead."),
+    "US":          ("Voice and cinematic", "English voiceover."),
+    "DE":          ("Voice and cinematic", "German voiceover."),
+    "ES":          ("Voice and cinematic", "Spanish voiceover."),
+    "FR":          ("Voice and cinematic", "French voiceover."),
+    "IT":          ("Voice and cinematic", "Italian voiceover."),
+    "RU":          ("Voice and cinematic", "Russian voiceover."),
+    "PL":          ("Voice and cinematic", "Polish voiceover."),
+    "CN":          ("Voice and cinematic", "Chinese voiceover."),
+    "CZ":          ("Voice and cinematic", "Czech voiceover."),
+    "KR":          ("Voice and cinematic", "Korean voiceover."),
+    "Op_Briefing": ("Voice and cinematic", "Mission briefing audio."),
+    "FMV":         ("Voice and cinematic", "Audio for full-motion video."),
+
+    "World":  ("Structural", "Parent of all in-world sound. Rarely picked directly."),
+    "Units":  ("Structural", "Parent of all unit sound. Rarely picked directly."),
+    "Rumble": ("Structural", "Low-frequency rumble layer."),
+}
+
+_LOOP_CATEGORIES = {
+    "Music", "Ambient",
+    "ActiveLoopsUEF", "ActiveLoopsAEON", "ActiveLoopsCYBRAN",
+    "ActiveLoopsSeraphim", "Construction_Loops", "ConstructionSeraphim",
+}
+
+GROUP_ORDER = ["Common", "Unit sounds", "Looping unit sounds",
+               "Voice and cinematic", "Structural"]
+
+CATEGORY_INFO = {}
+for _name in CATEGORIES:
+    _group, _desc = _DESCRIPTIONS.get(_name, ("Structural", ""))
+    _st = _STATS.get(_name, {"cum_db": 0.0, "max": 255})
+    CATEGORY_INFO[_name] = {
+        "group": _group,
+        "desc": _desc,
+        "cum_db": _st["cum_db"],
+        "max": _st["max"],
+        "loop": _name in _LOOP_CATEGORIES,
+    }
 
 # Compression presets defined in the FA template ("<none>" = uncompressed PCM).
 COMPRESSION_PRESETS = ["<none>", "ADPCM 128", "ADPCM 256", "ADPCM 512"]

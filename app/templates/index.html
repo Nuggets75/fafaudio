@@ -57,6 +57,7 @@
         .file-card .cue { font-size: 11px; color: #888; margin-bottom: 10px; }
         .file-card label { margin: 10px 0 4px; font-size: 12px; font-weight: 500; }
         .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        input[type=range] { width: 100%; margin: 6px 0 0; }
         .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
         .inline-check {
             display: flex; align-items: center; gap: 6px;
@@ -130,12 +131,26 @@
     </form>
 
 <script>
-const CATEGORIES = {{ categories | tojson }};
+const CATEGORIES   = {{ categories | tojson }};
+const CATEGORY_INFO = {{ category_info | tojson }};
+const GROUP_ORDER   = {{ group_order | tojson }};
 const form   = document.getElementById('f');
 const btn    = form.querySelector('button[type=submit]');
 const status = document.getElementById('status');
 const filesInput = document.getElementById('waves');
 const filesDiv   = document.getElementById('files');
+
+
+function catOptions() {
+    return GROUP_ORDER.map(g => {
+        const inGroup = CATEGORIES.filter(c => CATEGORY_INFO[c].group === g);
+        if (!inGroup.length) return '';
+        return `<optgroup label="${g}">` + inGroup.map(c => {
+            const sel = (c === 'Interface') ? ' selected' : '';
+            return `<option value="${c}"${sel}>${c}</option>`;
+        }).join('') + '</optgroup>';
+    }).join('');
+}
 
 function sanitizeCue(name) {
     const base = name.replace(/\.[^.]+$/, '');
@@ -158,18 +173,20 @@ filesInput.addEventListener('change', () => {
             <div class="cue">cue name: <strong>${cue}</strong></div>
 
             <label>Category</label>
-            <select name="category">
-                ${CATEGORIES.map(c => `<option value="${c}"${c === 'Default' ? ' selected' : ''}>${c}</option>`).join('')}
+            <select name="category" class="catsel">
+                ${catOptions()}
             </select>
+            <p class="hint cathint"></p>
 
             <div class="grid3">
                 <div>
-                    <label>Volume (dB)</label>
-                    <input type="number" name="volume_db" value="0" min="-60" max="12" step="1">
+                    <label>Volume: <span class="volout">0</span> dB</label>
+                    <input type="range" class="volslider" name="volume_db"
+                           value="0" min="-30" max="12" step="0.5">
                 </div>
                 <div>
-                    <label>Pitch (semitones &times;100)</label>
-                    <input type="number" name="pitch" value="0" min="-1200" max="1200" step="100">
+                    <label>Pitch (semitones)</label>
+                    <input type="number" name="pitch" value="0" min="-12" max="12" step="0.01">
                 </div>
                 <div>
                     <label>Priority</label>
@@ -207,11 +224,11 @@ filesInput.addEventListener('change', () => {
                     <div class="grid4">
                         <div>
                             <label>Min (dB)</label>
-                            <input type="number" name="vol_var_min" value="-2" min="-60" max="12" step="1">
+                            <input type="number" name="vol_var_min" value="-2" min="-60" max="12" step="0.1">
                         </div>
                         <div>
                             <label>Max (dB)</label>
-                            <input type="number" name="vol_var_max" value="0" min="-60" max="12" step="1">
+                            <input type="number" name="vol_var_max" value="0" min="-60" max="12" step="0.1">
                         </div>
                     </div>
                 </div>
@@ -225,11 +242,11 @@ filesInput.addEventListener('change', () => {
                     <div class="grid4">
                         <div>
                             <label>Min (semitones)</label>
-                            <input type="number" name="pitch_var_min" value="-1" min="-12" max="12" step="1">
+                            <input type="number" name="pitch_var_min" value="-1" min="-12" max="12" step="0.01">
                         </div>
                         <div>
                             <label>Max (semitones)</label>
-                            <input type="number" name="pitch_var_max" value="1" min="-12" max="12" step="1">
+                            <input type="number" name="pitch_var_max" value="1" min="-12" max="12" step="0.01">
                         </div>
                     </div>
                 </div>
@@ -250,6 +267,56 @@ filesInput.addEventListener('change', () => {
         };
         wire('.volvar-toggle',   '.volvar-box');
         wire('.pitchvar-toggle', '.pitchvar-box');
+
+        // Live dB readout next to the volume slider
+        const vs  = card.querySelector('.volslider');
+        const out = card.querySelector('.volout');
+        const showVol = () => {
+            const v = parseFloat(vs.value);
+            out.textContent = (v > 0 ? '+' : '') + v;
+        };
+        vs.addEventListener('input', showVol);
+
+        // Track whether the user has hand-set the volume for this file, so
+        // switching category doesn't silently discard their choice.
+        let volTouched = false;
+        vs.addEventListener('input', () => { volTouched = true; });
+
+        const sel      = card.querySelector('.catsel');
+        const hint     = card.querySelector('.cathint');
+        const loopMode = card.querySelector('.loop-mode');
+
+        function applyCategory() {
+            const info = CATEGORY_INFO[sel.value];
+            if (!info) return;
+
+            const db = info.cum_db;
+            const dbTxt = (db > 0 ? '+' : '') + db.toFixed(1);
+            let msg = info.desc +
+                ` Category adds ${dbTxt} dB. Up to ${info.max} at once.`;
+
+            // Default the slider so the built-in category gain is cancelled
+            // out: what you uploaded is roughly what you hear.
+            if (!volTouched) {
+                let target = -db;
+                target = Math.max(-30, Math.min(12, Math.round(target * 2) / 2));
+                vs.value = target;
+                showVol();
+                if (target !== 0) {
+                    msg += ` Volume preset to ${target > 0 ? '+' : ''}${target} dB to cancel that out.`;
+                }
+            }
+
+            if (info.loop && loopMode.value === 'none') {
+                loopMode.value = 'infinite';
+                msg += ' Looping enabled (this category is for continuous sounds).';
+            }
+
+            hint.textContent = msg;
+        }
+
+        sel.addEventListener('change', applyCategory);
+        applyCategory();
     });
 });
 
