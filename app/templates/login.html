@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>XACT Builder — Login</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+            max-width: 400px;
+            margin: 80px auto;
+            padding: 0 20px;
+            background: #1e1e28;
+            color: #e0e0e6;
+        }
+        h1 { margin-top: 0; text-align: center; }
+        form {
+            background: #2a2a36;
+            padding: 28px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        label {
+            display: block;
+            margin: 0 0 6px;
+            font-weight: 600;
+        }
+        input[type=password] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #1a1a24;
+            color: #e0e0e6;
+            font-size: 14px;
+        }
+        button {
+            margin-top: 16px;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #4a7dff;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button:hover { background: #5b8dff; }
+        .error {
+            margin-top: 14px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            background: #3a1a1a;
+            color: #f4a0a0;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <h1>XACT Builder</h1>
+    <form method="post" action="{{ url_for('login') }}">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autofocus required>
+        <button type="submit">Log in</button>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+    </form>
+</body>
+</html>

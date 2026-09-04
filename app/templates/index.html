@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>XACT Builder</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #1e1e28;
+            color: #e0e0e6;
+        }
+        h1 { margin-top: 0; }
+        p.sub { color: #999; margin-top: -8px; }
+        form {
+            background: #2a2a36;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.4);
+        }
+        label { display: block; margin: 16px 0 6px; font-weight: 600; }
+        input[type=text], input[type=file], input[type=number], select {
+            width: 100%; padding: 9px;
+            border: 1px solid #444; border-radius: 6px;
+            background: #1a1a24; color: #e0e0e6; font-size: 14px;
+        }
+        button {
+            margin-top: 20px; width: 100%; padding: 12px;
+            border: none; border-radius: 6px;
+            background: #4a7dff; color: #fff;
+            font-size: 15px; font-weight: 600; cursor: pointer;
+        }
+        button:disabled { background: #444; cursor: not-allowed; }
+        button:hover:not(:disabled) { background: #5b8dff; }
+        .hint { font-size: 11px; color: #888; margin: 4px 0 0; }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .file-card {
+            background: #232330;
+            border: 1px solid #3a3a48;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-top: 12px;
+        }
+        .file-card h3 {
+            margin: 0 0 4px;
+            font-size: 14px;
+            color: #a8c8ff;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+        .file-card .cue { font-size: 11px; color: #888; margin-bottom: 10px; }
+        .file-card label { margin: 10px 0 4px; font-size: 12px; font-weight: 500; }
+        .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        input[type=range] { width: 100%; margin: 6px 0 0; }
+        details.adv { margin-top: 14px; }
+        details.adv > summary {
+            cursor: pointer; user-select: none;
+            font-size: 12px; font-weight: 600; color: #8fa8d8;
+            padding: 6px 0;
+        }
+        details.adv > summary:hover { color: #a8c8ff; }
+        details.adv .advbody {
+            padding: 2px 0 4px 14px;
+            border-left: 2px solid #3a3a48;
+            margin-top: 4px;
+        }
+        .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+        .inline-check {
+            display: flex; align-items: center; gap: 6px;
+            margin: 12px 0 0; font-size: 12px; font-weight: 500;
+        }
+        .inline-check input { width: auto; }
+        .varbox { margin-top: 6px; padding-left: 20px; display: none; }
+        .varbox.on { display: block; }
+        fieldset {
+            border: 1px solid #3a3a48; border-radius: 6px;
+            padding: 10px 12px; margin: 12px 0 0;
+        }
+        legend { font-size: 11px; color: #999; padding: 0 6px; }
+        #status {
+            margin-top: 20px; padding: 14px; border-radius: 6px;
+            display: none; white-space: pre-wrap; word-break: break-word;
+            font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px;
+        }
+        #status.ok   { display:block; background:#1a3a1a; color:#a8e6a8; }
+        #status.err  { display:block; background:#3a1a1a; color:#f4a0a0; }
+        #status.info { display:block; background:#1a2a3a; color:#a0c8f4; }
+        details { margin-top: 8px; font-family: ui-monospace, monospace; font-size: 11px; color: #ccc; }
+        summary { cursor: pointer; user-select: none; }
+        .logout-form { float: right; margin: 0; }
+        .logout-form button {
+            width: auto; padding: 6px 14px; margin: 0;
+            background: #444; font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>XACT Builder
+        <form method="post" action="{{ url_for('logout') }}" class="logout-form">
+            <button type="submit">Log out</button>
+        </form>
+    </h1>
+    <p class="sub">Upload audio files &rarr; get .xwb / .xsb / .xgs bundle for FAF mods.
+       <span style="color:#666; font-size:11px;">build {{ app_version }}</span></p>
+
+    <form id="f">
+        <label for="bank_name">Bank name</label>
+        <input type="text" id="bank_name" name="bank_name"
+               placeholder="SoundBank" value="SoundBank">
+
+        <details class="adv">
+            <summary>Advanced bank options</summary>
+            <div class="advbody">
+                <label for="compression_preset">Compression</label>
+                <select id="compression_preset" name="compression_preset">
+                    {% for p in presets %}
+                    <option value="{{ p }}">{{ p }}</option>
+                    {% endfor %}
+                </select>
+                <p class="hint">Vanilla FA uses &lt;none&gt; for every bank. Only worth changing for long music tracks.</p>
+
+                <div class="inline-check">
+                    <input type="checkbox" id="streaming" name="streaming" value="1">
+                    <label for="streaming" style="margin:0;">Streaming wave bank (for long music tracks)</label>
+                </div>
+            </div>
+        </details>
+
+        <label for="waves">Audio files (multiple, up to 32)</label>
+        <input type="file" id="waves" name="waves"
+               accept=".wav,.mp3,.ogg,.m4a,.aac,.flac,.opus,.wma,audio/*"
+               multiple required>
+        <p class="hint">Any common audio format. Cue name = filename without extension.</p>
+
+        <div id="files"></div>
+
+        <button type="submit">Build</button>
+        <div id="status"></div>
+    </form>
+
+<script>
+const CATEGORIES   = {{ categories | tojson }};
+const CATEGORY_INFO = {{ category_info | tojson }};
+const GROUP_ORDER   = {{ group_order | tojson }};
+const form   = document.getElementById('f');
+const btn    = form.querySelector('button[type=submit]');
+const status = document.getElementById('status');
+const filesInput = document.getElementById('waves');
+const filesDiv   = document.getElementById('files');
+
+
+function catOptions() {
+    return GROUP_ORDER.map(g => {
+        const inGroup = CATEGORIES.filter(c => CATEGORY_INFO[c].group === g);
+        if (!inGroup.length) return '';
+        return `<optgroup label="${g}">` + inGroup.map(c => {
+            const sel = (c === 'Default') ? ' selected' : '';
+            return `<option value="${c}"${sel}>${c}</option>`;
+        }).join('') + '</optgroup>';
+    }).join('');
+}
+
+function sanitizeCue(name) {
+    const base = name.replace(/\.[^.]+$/, '');
+    const clean = base.replace(/[^A-Za-z0-9_]/g, '');
+    return clean || 'cue';
+}
+
+filesInput.addEventListener('change', () => {
+    filesDiv.innerHTML = '';
+    const seen = {};
+    Array.from(filesInput.files).forEach((file) => {
+        let cue = sanitizeCue(file.name);
+        if (seen[cue]) { let n = 2; while (seen[cue + '_' + n]) n++; cue = cue + '_' + n; }
+        seen[cue] = true;
+
+        const card = document.createElement('div');
+        card.className = 'file-card';
+        card.innerHTML = `
+            <h3>${file.name}</h3>
+            <div class="cue">cue name: <strong>${cue}</strong></div>
+
+            <label>Volume: <span class="volout">0</span> dB</label>
+            <input type="range" class="volslider" name="volume_db"
+                   value="0" min="-30" max="12" step="0.5">
+
+            <details class="adv">
+                <summary>Advanced</summary>
+                <div class="advbody">
+                    <label>Category</label>
+                    <select name="category" class="catsel">
+                        ${catOptions()}
+                    </select>
+                    <p class="hint cathint"></p>
+
+                    <div class="grid3">
+                        <div>
+                            <label>Pitch (semitones)</label>
+                            <input type="number" name="pitch" value="0" min="-12" max="12" step="0.01">
+                        </div>
+                        <div>
+                            <label>Priority</label>
+                            <input type="number" name="priority" value="0" min="0" max="255" step="1">
+                        </div>
+                    </div>
+
+                    <fieldset>
+                        <legend>Looping</legend>
+                        <div class="grid3">
+                            <div>
+                                <label>Mode</label>
+                                <select name="loop_mode" class="loop-mode">
+                                    <option value="none" selected>No loop</option>
+                                    <option value="count">Loop N times</option>
+                                    <option value="infinite">Infinite</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Loop count</label>
+                                <input type="number" name="loop_count" value="0" min="0" max="254" step="1">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Variation (randomised each play)</legend>
+
+                        <div class="inline-check">
+                            <input type="checkbox" class="volvar-toggle">
+                            <input type="hidden" name="vol_var_enabled" value="0">
+                            <label style="margin:0;">Volume variation</label>
+                        </div>
+                        <div class="varbox volvar-box">
+                            <div class="grid4">
+                                <div>
+                                    <label>Min (dB)</label>
+                                    <input type="number" name="vol_var_min" value="-2" min="-60" max="12" step="0.1">
+                                </div>
+                                <div>
+                                    <label>Max (dB)</label>
+                                    <input type="number" name="vol_var_max" value="0" min="-60" max="12" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="inline-check">
+                            <input type="checkbox" class="pitchvar-toggle">
+                            <input type="hidden" name="pitch_var_enabled" value="0">
+                            <label style="margin:0;">Pitch variation</label>
+                        </div>
+                        <div class="varbox pitchvar-box">
+                            <div class="grid4">
+                                <div>
+                                    <label>Min (semitones)</label>
+                                    <input type="number" name="pitch_var_min" value="-1" min="-12" max="12" step="0.01">
+                                </div>
+                                <div>
+                                    <label>Max (semitones)</label>
+                                    <input type="number" name="pitch_var_max" value="1" min="-12" max="12" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </details>
+        `;
+        filesDiv.appendChild(card);
+
+        // Wire the checkbox -> hidden field + show/hide, so the POST always
+        // has one value per file in the same order as the file list.
+        const wire = (toggleSel, boxSel) => {
+            const cb  = card.querySelector(toggleSel);
+            const box = card.querySelector(boxSel);
+            const hidden = cb.nextElementSibling;
+            cb.addEventListener('change', () => {
+                hidden.value = cb.checked ? '1' : '0';
+                box.classList.toggle('on', cb.checked);
+            });
+        };
+        wire('.volvar-toggle',   '.volvar-box');
+        wire('.pitchvar-toggle', '.pitchvar-box');
+
+        // Live dB readout next to the volume slider
+        const vs  = card.querySelector('.volslider');
+        const out = card.querySelector('.volout');
+        const showVol = () => {
+            const v = parseFloat(vs.value);
+            out.textContent = (v > 0 ? '+' : '') + v;
+        };
+        vs.addEventListener('input', showVol);
+
+        // Track whether the user has hand-set the volume for this file, so
+        // switching category doesn't silently discard their choice.
+        let volTouched = false;
+        vs.addEventListener('input', () => { volTouched = true; });
+
+        const sel      = card.querySelector('.catsel');
+        const hint     = card.querySelector('.cathint');
+        const loopMode = card.querySelector('.loop-mode');
+
+        function applyCategory(initial) {
+            const info = CATEGORY_INFO[sel.value];
+            if (!info) return;
+
+            const db = info.cum_db;
+            const dbTxt = (db > 0 ? '+' : '') + db.toFixed(1);
+            let msg = info.desc +
+                ` Category adds ${dbTxt} dB. Up to ${info.max} at once.`;
+
+            // Default the slider so the built-in category gain is cancelled
+            // out: what you uploaded is roughly what you hear.
+            if (!volTouched && !initial) {
+                let target = -db;
+                target = Math.max(-30, Math.min(12, Math.round(target * 2) / 2));
+                vs.value = target;
+                showVol();
+                if (target !== 0) {
+                    msg += ` Volume preset to ${target > 0 ? '+' : ''}${target} dB to cancel that out.`;
+                }
+            }
+
+            if (info.loop && loopMode.value === 'none') {
+                loopMode.value = 'infinite';
+                msg += ' Looping enabled (this category is for continuous sounds).';
+            }
+
+            hint.textContent = msg;
+        }
+
+        sel.addEventListener('change', () => applyCategory(false));
+        // Initial call only fills in the hint text; it must not move the
+        // volume slider, or the simple path shows a mystery number.
+        applyCategory(true);
+    });
+});
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.textContent = 'Building...';
+    status.className = 'info';
+    status.textContent = 'Uploading & building — usually a few seconds.';
+
+    const fd = new FormData(form);
+    try {
+        const resp = await fetch('/build', { method: 'POST', body: fd });
+        if (resp.ok) {
+            const bank = document.getElementById('bank_name').value.trim() || 'SoundBank';
+            const blob = await resp.blob();
+            const url  = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = bank + '.zip';
+            document.body.appendChild(a); a.click(); a.remove();
+            URL.revokeObjectURL(url);
+            status.className = 'ok';
+            status.textContent = 'Done. Zip downloaded.';
+        } else {
+            const data = await resp.json().catch(() => ({error: 'Unknown error'}));
+            status.className = 'err';
+            let msg = 'Build failed: ' + (data.error || 'Unknown error');
+            if (data.stdout || data.stderr || data.xap_content || data.ffmpeg_stderr) {
+                msg += '\n\n(details below)';
+            }
+            status.textContent = msg;
+            if (data.stdout || data.stderr || data.xap_content || data.ffmpeg_stderr) {
+                const det = document.createElement('details');
+                det.innerHTML = '<summary>Diagnostic output</summary><pre>' +
+                    (data.version ? 'VERSION: ' + data.version + '\n' : '') +
+                    (data.command ? 'COMMAND: ' + data.command + '\n\n' : '') +
+                    (data.workdir_contents ? 'WORKDIR: ' + JSON.stringify(data.workdir_contents) + '\n' : '') +
+                    (data.win_dir_contents ? 'WIN DIR: ' + JSON.stringify(data.win_dir_contents) + '\n\n' : '') +
+                    (data.ffmpeg_stderr ? 'FFMPEG STDERR:\n' + data.ffmpeg_stderr + '\n\n' : '') +
+                    (data.stderr ? 'STDERR:\n' + data.stderr + '\n\n' : '') +
+                    (data.stdout ? 'STDOUT:\n' + data.stdout + '\n\n' : '') +
+                    (data.xap_content ? 'GENERATED .xap:\n' + data.xap_content : '') +
+                    '</pre>';
+                status.appendChild(det);
+            }
+        }
+    } catch (err) {
+        status.className = 'err';
+        status.textContent = 'Network error: ' + err.message;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Build';
+    }
+});
+</script>
+</body>
+</html>
